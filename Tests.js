@@ -125,17 +125,34 @@ var Tests = {
         }, {
             str : 'pcdq'
         } ])
-        
-        this.test('p*d+', [{
-            str : 'p', 
+
+        this.test('p*d+', [ {
+            str : 'p',
             expected : false
         }, {
             str : 'ddddd',
             expected : true
-        }])
-        
-        this.test('p|d+c+', [{
+        } ])
+
+        this.test('p|d+c+', [ {
             str : 'p'
+        } ])
+
+        this.test('abc', [ {
+            str : 'x',
+            expected : false
+        }, {
+            str : 'a',
+            expected : false
+        }, {
+            str : 'b',
+            expected : false
+        }, {
+            str : 'abc'
+        } ])
+        
+        this.test('a+b*c*d+|c+d+e+', [{
+            str : 'cde'
         }])
 
         console.log(this.success, ' cases executed successfully');

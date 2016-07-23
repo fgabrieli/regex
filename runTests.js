@@ -4,15 +4,17 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-var debug = false;
+var debug = true;
 
 if (debug) {
     var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
     var NFA = require('./NFA.js').NFA;
 
-    var regexStr = 'p|d+c+';
+    var regexStr = 'a+b*c*d+|c+d+e+';
 
+    console.log('orig regex', regexStr);
+    
     var lexAnalyzer = new LexicalAnalyzer(regexStr);
     regexStr = lexAnalyzer.analyze();
     console.log('regex to parse:', regexStr);
@@ -27,7 +29,7 @@ if (debug) {
     nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
     var nfa = nfaInst.getNfa();
     console.log('nfa', nfa);
-    console.log(nfa.test('p'));
+    console.log(nfa.test('ad'));
 } else {
     var Tests = require('./Tests').Tests;
     Tests.run();

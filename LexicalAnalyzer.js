@@ -15,15 +15,17 @@ function LexicalAnalyzer(str) {
     var currentIdx = 0;
 
     this.analyze = function() {
+        // precedence: +, *, |, alphabet
+        
         analyzeAdd();
 
         group();
 
-        analyzeOr();
-
-        group();
-
         analyzeKleene();
+        
+        group();
+        
+        analyzeOr();
 
         group();
 
@@ -42,19 +44,28 @@ function LexicalAnalyzer(str) {
 
         var stack = [];
 
+        var processStack = function() {
+            if (stack.length > 1) {
+                var regex = stack.join('');
+
+                var symbol = new Symbol(regex)
+                str = str.replace(regex, symbol.id);
+                
+                console.log(str);
+                
+                stack = [];
+            }
+        }
+
         do {
             if (isSymbol()) {
                 stack.push(lexeme());
-                if (stack.length > 1) {
-                    var regex = stack.join('');
-
-                    var symbol = new Symbol(regex)
-                    str = str.replace(regex, symbol.id);
-                    
-                    stack = [];
-                }
+            } else {
+                processStack();
             }
         } while (next());
+
+        processStack();
     }
 
     function analyzeAlphabet() {
