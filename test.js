@@ -8,7 +8,7 @@ var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
 var NFA = require('./NFA.js').NFA;
 
-var regexStr = 'rc+q*n*';
+var regexStr = 'c+d+e+';
 
 var lexAnalyzer = new LexicalAnalyzer(regexStr);
 regexStr = lexAnalyzer.analyze();
@@ -21,9 +21,9 @@ var syntaxTree = syntaxParser.parse(regexStr);
 syntaxTree.print();
 
 var nfaInst = new NFA();
-nfaInst.createFromSyntaxTree(syntaxTree);
+nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
 var nfa = nfaInst.getNfa();
-console.log(nfa);
+console.log('nfa', nfa);
 //nfa.print();
 
 function testRegex(str, expected) {
@@ -33,7 +33,7 @@ function testRegex(str, expected) {
         console.log('[ok]', str)
 }
 
-testRegex('rcqn', true);
+testRegex('cccccdddddeeeee', true);
 //testRegex('rccccc', true);
 
 

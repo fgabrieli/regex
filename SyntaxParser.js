@@ -108,24 +108,45 @@ function SyntaxParser() {
     }
 
     function or(lexAnalyzer) {
+        lexAnalyzer.prev();
+        
+        var opn1 = lexAnalyzer.isSymbol() ? new SyntaxParser().parse(lexAnalyzer.lexeme()) : lexAnalyzer.lexeme();
+        
+        lexAnalyzer.next();
         lexAnalyzer.next();
 
+        var opn2 = lexAnalyzer.isSymbol() ? new SyntaxParser().parse(lexAnalyzer.lexeme()) : lexAnalyzer.lexeme();
+
         return new TreeNode('or', {
-            opn1 : stack.shift(),
-            opn2 : lexAnalyzer.lexeme()
+            opn1 : opn1,
+            opn2 : opn2
         });
     }
 
     function add(lexAnalyzer) {
-        return new TreeNode('add', {
-            opn1 : stack.shift()
+        lexAnalyzer.prev();
+        
+        var node = new TreeNode('add', {
+            opn1 : lexAnalyzer.lexeme()
         })
+        
+        lexAnalyzer.next();
+        lexAnalyzer.next();
+        
+        return node;
     }
 
     function kleene(lexAnalyzer) {
-        return new TreeNode('kleene', {
-            opn1 : stack.shift()
+        lexAnalyzer.prev();
+        
+        var node = new TreeNode('kleene', {
+            opn1 : lexAnalyzer.lexeme()
         })
+        
+        lexAnalyzer.next();
+        lexAnalyzer.next();
+        
+        return node;
     }
 }
 

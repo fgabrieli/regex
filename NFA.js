@@ -1,5 +1,8 @@
 // NFA's have states (which are actually nodes of a graph since the nfa itself
 // is a graph)
+
+var TreeNode = require('./TreeNode').TreeNode;
+
 function State(type, char, isFinal) {
     this.type = type;
 
@@ -86,17 +89,26 @@ function NFA() {
     var FINAL = true;
     
     var nfa = false;
+    
+    var last = false;
 
     this.getNfa = function() {
         return nfa;
     }
 
-    this.createFromSyntaxTree = function(syntaxTree) {
+    this.getLastState = function() {
+        return last;
+    }
+    
+    this.createFromSyntaxTree = function(syntaxTree, setFinal) {
         // instead of an initial state i just set an e-closure
         nfa = new State('e-closure');
 
-        var lastState = addStates(nfa, syntaxTree);
-        lastState.isFinal = true;
+        last = addStates(nfa, syntaxTree);
+
+        if (setFinal) {
+            last.isFinal = true;
+        }
         
         return nfa;
     }
@@ -148,18 +160,38 @@ function NFA() {
     function or(prevState, opn1, opn2) {
         var e1 = new State('e-closure');
         var e2 = new State('e-closure');
-
         prevState.states.push(e1, e2);
 
-        var stateOpn1 = new State('alphabet', opn1);
-        e1.states.push(stateOpn1);
+        var opn1First = opn1Last = false;
+        if (opn1 instanceof TreeNode) {
+            var nfaInst = new NFA();
+            opn1First = nfaInst.createFromSyntaxTree(opn1);
+            opn1Last = nfaInst.getLastState();
+        } else {
+            opn1First = opn1Last = new State('alphabet', opn1);
+        }
+        
+        e1.states.push(opn1First);
 
-        var stateOpn2 = new State('alphabet', opn2);
-        e2.states.push(stateOpn2);
+        
+        var opn2First = opn2Last = false;
+        if (opn2 instanceof TreeNode) {
+            var nfaInst = new NFA();
+            opn2First = nfaInst.createFromSyntaxTree(opn2);
+            opn2Last = nfaInst.getLastState();
+        } else {
+            opn2First = opn2Last = new State('alphabet', opn2);
+        }
+        
+        e1.states.push(opn2First);
+
+//        var stateOpn2 = opn2 instanceof TreeNode ? new NFA().createFromSyntaxTree(opn2).getLastState() :  new State('alphabet', opn2);
+//        e2.states.push(stateOpn2);
+        
 
         var e3 = new State('e-closure');
-        stateOpn1.states.push(e3);
-        stateOpn2.states.push(e3);
+        opn1Last.states.push(e3);
+        opn2Last.states.push(e3);
 
         e3.states.push(prevState);
 
@@ -167,10 +199,10 @@ function NFA() {
     }
 
     function kleene(prevState, opn1) {
-        var opnState = new State('alphabet', opn1, FINAL);
+        var opnState = new State('alphabet', opn1);
         prevState.states.push(opnState);
 
-        var e1 = new State('e-closure', FINAL);
+        var e1 = new State('e-closure');
         opnState.states.push(e1);
 
         prevState.states.push(e1);
