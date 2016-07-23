@@ -9,12 +9,25 @@ function TreeNode(type, data) {
     /**
      * Print tree for the parsed regex.
      */
+    var indent = 0;
+    
     this.print = function() {
-        console.log(this);
+        indent = 0;
+        
+        printNode(this);
+    } 
+    
+    function printNode(node) {
+        var whiteSpace = Array(indent * 4).join(' ');
+        console.log(whiteSpace, node.type, node.data);
 
-        for (var i = 0; i < this.nodes.length; i++) {
-            this.print.call(this.nodes[i]);
+        indent++;
+        
+        for (var i = 0; i < node.nodes.length; i++) {
+            printNode(node.nodes[i]);
         }
+        
+        indent--;
     }
 }
 

@@ -6,9 +6,9 @@
 
 var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
-var NFA = require('./NFA.js').NFA ;
+var NFA = require('./NFA.js').NFA;
 
-var regexStr = 'qt*';
+var regexStr = 'rc+q*n*';
 
 var lexAnalyzer = new LexicalAnalyzer(regexStr);
 regexStr = lexAnalyzer.analyze();
@@ -18,12 +18,23 @@ var SyntaxParser = require('./SyntaxParser').SyntaxParser;
 
 var syntaxParser = new SyntaxParser();
 var syntaxTree = syntaxParser.parse(regexStr);
-//syntaxTree.print();
-
+syntaxTree.print();
 
 var nfaInst = new NFA();
 nfaInst.createFromSyntaxTree(syntaxTree);
 var nfa = nfaInst.getNfa();
-nfa.print();
+console.log(nfa);
+//nfa.print();
 
-console.log(nfa.test(''));
+function testRegex(str, expected) {
+    if (nfa.test(str) != expected)
+        throw 'Fails for ' + str;
+    else
+        console.log('[ok]', str)
+}
+
+testRegex('rcqn', true);
+//testRegex('rccccc', true);
+
+
+//console.log(nfa.test('rccccc'));

@@ -11,7 +11,6 @@ var RegexHelper = require('./helper/RegexHelper').RegexHelper;
 var Symbol = require('./Symbol').Symbol;
 var symbolTable = require('./Symbol');
 
-
 function LexicalAnalyzer(str) {
     var currentIdx = 0;
 
@@ -22,7 +21,23 @@ function LexicalAnalyzer(str) {
 
         analyzeKleene();
 
+        analyzeAlphabet();
+
         return str;
+    }
+
+    function analyzeAlphabet() {
+        resetIdx();
+
+        do {
+            if (!isSymbol()) {
+                var symbol = new Symbol(lexeme());
+
+                str = str.replace(lexeme(), symbol.id);
+
+                return analyzeAlphabet();
+            }
+        } while (next());
     }
 
     function analyzeAdd() {
@@ -125,16 +140,18 @@ function LexicalAnalyzer(str) {
 
         return str.substr(start, i - start);
     }
-    
-    this.next = next;
-    
-    this.prev = prev;
-    
-    this.lexeme = lexeme;
 
-    this.isSymbol = function() {
+    function isSymbol() {
         return str[currentIdx] == '<';
     }
+
+    this.next = next;
+
+    this.prev = prev;
+
+    this.lexeme = lexeme;
+
+    this.isSymbol = isSymbol;
 }
 
 module.exports = {

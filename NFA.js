@@ -5,9 +5,7 @@ function State(type, char, isFinal) {
 
     this.char = char ? char : false;
 
-    this.isFinal = function() {
-        return isFinal ? isFinal : false;
-    }
+    this.isFinal = isFinal ? isFinal : false;
 
     // i leave this exposed for debugging purposes
     this.states = [];
@@ -49,23 +47,29 @@ function State(type, char, isFinal) {
     }
 
     this.test = function(str) {
+        //console.log('checking state', this);
+        
+        /*
         if (str.length == 0)
             return true;
+        */
+        
+        if (this.isFinal)
+            return true;
 
-        if (this.isEClosure()) {
-            if (this.hasNext()) {
-                var nextStates = this.getNext();
-                for (var j = 0; j < nextStates.length; j++) {
-                    if (nextStates[j].test(str)) {
-                        return true;
-                    }
+        if (this.isEClosure() && this.hasNext()) {
+            var nextStates = this.getNext();
+            for (var j = 0; j < nextStates.length; j++) {
+                if(nextStates[j].test(str)) {
+                    return true;
                 }
-            } else {
-                return true;
             }
         }
 
-        if (this.char == str[0]) {
+        if (this.char === str[0]) {
+            if (!this.hasNext())
+                return true;
+            
             var nextStates = this.getNext();
             for (var j = 0; j < nextStates.length; j++) {
                 if (nextStates[j].test(str.substr(1))) {
@@ -91,8 +95,9 @@ function NFA() {
         // instead of an initial state i just set an e-closure
         nfa = new State('e-closure');
 
-        addStates(nfa, syntaxTree);
-
+        var lastState = addStates(nfa, syntaxTree);
+        lastState.isFinal = true;
+        
         return nfa;
     }
 
@@ -113,6 +118,8 @@ function NFA() {
             lastState = add(state, node.data.opn1);
         } else if (node.type == 'kleene') {
             lastState = kleene(state, node.data.opn1);
+        } else if (node.type == 'alphabet') {
+            lastState = alphabet(state, node.data.char);
         } else {
             lastState = state;
         }
@@ -125,7 +132,18 @@ function NFA() {
     }
 
     /**
-     * Create NFA states for OR operation
+     * Create NFA state for chars (alphabet, sigma)
+     */
+    function alphabet(prevState, char) {
+        var azState = new State('alphabet', char);
+        
+        prevState.states.push(azState);
+        
+        return azState;
+    }
+    
+    /**
+     * Create NFA state for the OR operation
      */
     function or(prevState, opn1, opn2) {
         var e1 = new State('e-closure');
@@ -165,7 +183,7 @@ function NFA() {
         prevState.states.push(opnState);
 
         var e1 = new State('e-closure');
-        e1.states.push(prevState);
+        e1.states.push(opnState);
 
         opnState.states.push(e1);
 

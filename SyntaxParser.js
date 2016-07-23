@@ -68,10 +68,28 @@ function SyntaxParser() {
                 }
 
                 addNode = false;
+                
+                stack = [];
             }
 
         } while (lexAnalyzer.next());
 
+        if (stack.length > 0) {
+            for (var i = 0; i < stack.length; i++) {
+                var node = new TreeNode('alphabet', {
+                    char : stack[i]
+                })
+                
+                if (!prevNode) {
+                    prevNode = node;
+                    parent = prevNode;
+                } else {
+                    parent.nodes.push(prevNode, node);
+                    prevNode = parent;
+                }
+            }
+        }
+        
         tree = parent;
 
         return tree;
