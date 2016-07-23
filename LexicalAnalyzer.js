@@ -51,8 +51,6 @@ function LexicalAnalyzer(str) {
                 var symbol = new Symbol(regex)
                 str = str.replace(regex, symbol.id);
                 
-                console.log(str);
-                
                 stack = [];
             }
         }

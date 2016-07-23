@@ -76,7 +76,7 @@ var Tests = {
 
         this.test('p|c+d*t+', [ {
             str : 'p',
-            expected : false
+            expected : true
         }, {
             str : 'pt',
             expected : true
