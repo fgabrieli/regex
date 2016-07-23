@@ -17,13 +17,44 @@ function LexicalAnalyzer(str) {
     this.analyze = function() {
         analyzeAdd();
 
+        group();
+
         analyzeOr();
+
+        group();
 
         analyzeKleene();
 
+        group();
+
         analyzeAlphabet();
 
+        group();
+
         return str;
+    }
+
+    /**
+     * Group consecutive symbols into one so we always have at most <symbol><operator><symbol>
+     */
+    function group() {
+        resetIdx();
+
+        var stack = [];
+
+        do {
+            if (isSymbol()) {
+                stack.push(lexeme());
+                if (stack.length > 1) {
+                    var regex = stack.join('');
+
+                    var symbol = new Symbol(regex)
+                    str = str.replace(regex, symbol.id);
+                    
+                    stack = [];
+                }
+            }
+        } while (next());
     }
 
     function analyzeAlphabet() {

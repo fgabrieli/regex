@@ -56,7 +56,7 @@ function State(type, char, isFinal) {
         if (str.length == 0)
             return true;
         */
-        
+
         if (this.isFinal)
             return true;
 
@@ -183,7 +183,7 @@ function NFA() {
             opn2First = opn2Last = new State('alphabet', opn2);
         }
         
-        e1.states.push(opn2First);
+        e2.states.push(opn2First);
 
 //        var stateOpn2 = opn2 instanceof TreeNode ? new NFA().createFromSyntaxTree(opn2).getLastState() :  new State('alphabet', opn2);
 //        e2.states.push(stateOpn2);

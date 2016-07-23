@@ -33,12 +33,16 @@ function SyntaxParser() {
         do {
             var lexeme = lexAnalyzer.lexeme();
 
-            if (lexAnalyzer.isSymbol()) {
-                var subRegex = symbolTable.getByLexeme(lexeme).data;
-                node = new SyntaxParser().parse(subRegex);
-
-                addNode = true;
-            } else if (regHelper.isOr(lexeme)) {
+//            if (lexAnalyzer.isSymbol()) {
+//                var subRegex = symbolTable.getByLexeme(lexeme).data;
+//                node = new SyntaxParser().parse(subRegex);
+//
+//                stack.push(node);
+//                
+//                addNode = false;
+//            } 
+            
+            if (regHelper.isOr(lexeme)) {
                 node = or(lexAnalyzer);
 
                 addNode = true;
@@ -76,14 +80,24 @@ function SyntaxParser() {
 
         if (stack.length > 0) {
             for (var i = 0; i < stack.length; i++) {
-                var node = new TreeNode('alphabet', {
-                    char : stack[i]
-                })
+                var node = false;
+                
+                var entry = stack[i];
+                
+                if (entry[0] === '<') {
+                    var subRegex = symbolTable.getByLexeme(entry).data;
+                    node = new SyntaxParser().parse(subRegex);
+                } else {
+                    node = new TreeNode('alphabet', {
+                        char : entry
+                    })
+                }
                 
                 if (!prevNode) {
                     prevNode = node;
                     parent = prevNode;
                 } else {
+                    parent = new TreeNode('empty'); // connect pair of nodes
                     parent.nodes.push(prevNode, node);
                     prevNode = parent;
                 }

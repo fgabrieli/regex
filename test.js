@@ -4,37 +4,31 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
+var debug = false;
 
-var NFA = require('./NFA.js').NFA;
+if (debug) {
+    var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
-var regexStr = 'c+d+e+';
+    var NFA = require('./NFA.js').NFA;
 
-var lexAnalyzer = new LexicalAnalyzer(regexStr);
-regexStr = lexAnalyzer.analyze();
-console.log('regex to parse:', regexStr);
+    var regexStr = 'p|d+c+';
 
-var SyntaxParser = require('./SyntaxParser').SyntaxParser;
+    var lexAnalyzer = new LexicalAnalyzer(regexStr);
+    regexStr = lexAnalyzer.analyze();
+    console.log('regex to parse:', regexStr);
 
-var syntaxParser = new SyntaxParser();
-var syntaxTree = syntaxParser.parse(regexStr);
-syntaxTree.print();
+    var SyntaxParser = require('./SyntaxParser').SyntaxParser;
 
-var nfaInst = new NFA();
-nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
-var nfa = nfaInst.getNfa();
-console.log('nfa', nfa);
-//nfa.print();
+    var syntaxParser = new SyntaxParser();
+    var syntaxTree = syntaxParser.parse(regexStr);
+    syntaxTree.print();
 
-function testRegex(str, expected) {
-    if (nfa.test(str) != expected)
-        throw 'Fails for ' + str;
-    else
-        console.log('[ok]', str)
+    var nfaInst = new NFA();
+    nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
+    var nfa = nfaInst.getNfa();
+    console.log('nfa', nfa);
+    console.log(nfa.test('p'));
+} else {
+    var Tests = require('./Tests').Tests;
+    Tests.run();
 }
-
-testRegex('cccccdddddeeeee', true);
-//testRegex('rccccc', true);
-
-
-//console.log(nfa.test('rccccc'));
