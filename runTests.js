@@ -11,7 +11,7 @@ if (debug) {
 
     var NFA = require('./NFA.js').NFA;
 
-    var regexStr = 'a+b*c*d+|c+d+e+';
+    var regexStr = 'a+b*c*d+';
 
     console.log('orig regex', regexStr);
     
@@ -29,7 +29,7 @@ if (debug) {
     nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
     var nfa = nfaInst.getNfa();
     console.log('nfa', nfa);
-    console.log(nfa.test('ad'));
+    console.log(nfa.test('abccd'));
 } else {
     var Tests = require('./Tests').Tests;
     Tests.run();

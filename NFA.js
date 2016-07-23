@@ -1,5 +1,8 @@
-// NFA's have states (which are actually nodes of a graph since the nfa itself
-// is a graph)
+/**
+ * Regular expression compiler
+ * 
+ * @author Fernando Gabrieli, fgabrieli at github
+ */
 
 var TreeNode = require('./TreeNode').TreeNode;
 

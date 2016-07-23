@@ -1,3 +1,9 @@
+/**
+ * Regular expression compiler
+ * 
+ * @author Fernando Gabrieli, fgabrieli at github
+ */
+
 var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
 var SyntaxParser = require('./SyntaxParser').SyntaxParser;
@@ -153,6 +159,14 @@ var Tests = {
         
         this.test('a+b*c*d+|c+d+e+', [{
             str : 'cde'
+        }, {
+            str : 'ad'
+        }, {
+            str : 'abcd'
+        }, {
+            str : 'adc'
+        }, {
+            str : 'abccd'
         }])
 
         console.log(this.success, ' cases executed successfully');
