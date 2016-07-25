@@ -156,8 +156,8 @@ var Tests = {
         }, {
             str : 'abc'
         } ])
-        
-        this.test('a+b*c*d+|c+d+e+', [{
+
+        this.test('a+b*c*d+|c+d+e+', [ {
             str : 'cde'
         }, {
             str : 'ad'
@@ -167,9 +167,65 @@ var Tests = {
             str : 'adc'
         }, {
             str : 'abccd'
+        }, {
+            str : 'cde'
+        }, {
+            str : 'aaaaaaaaaaaaaaaaaaaaaaaaacde'
+        }, {
+            str : 'abcdx',
+            expected : true
+        }, {
+            str : 'x',
+            expected : false
+        } ])
+
+        this.test('a+|b+|c+', [ {
+            str : 'a'
+        }, {
+            str : 'abc'
+        }, {
+            str : 'bbbbbbbbbbbb'
+        }, {
+            str : 'bccccccccccbcbbcbcbc'
+        }, {
+            str : 'aaaaaaaaabbbbbbbbcbcbcbcbcbcbbcbcbcbcb'
+        } ])
+
+        this.test('a|b|c|d|e|f|g|h', [ {
+            str : 'a'
+        }, {
+            str : 'abc'
+        }, {
+            str : 'h'
+        } ])
+
+        this.test('abcdef+g*', [{
+            str: 'a',
+            expected: false
+        }, 
+        {
+            str: 'abcde',
+            expected : false
+        }, {
+            str : 'abcdefffff'
+        }, {
+            str : 'abcdefffffgggggggggggg'
+        }])
+        
+        this.test('a+b+c+d+e+f+g*|t', [{
+            str : 't'
+        }, {
+            str: 'aaaabcdefg'
+        }, {
+            str: 'tt'
         }])
 
-        console.log(this.success, ' cases executed successfully');
+        this.test('a', [{
+            str: 'b',
+            expected : false
+        }])
+        
+        console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }
 }
 

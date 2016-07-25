@@ -6,6 +6,8 @@
 
 var TreeNode = require('./TreeNode').TreeNode;
 
+var debug = require('./helper/Debug').debug;
+
 function State(type, char, isFinal) {
     this.type = type;
 
@@ -43,7 +45,7 @@ function State(type, char, isFinal) {
         if (printed.indexOf(state) !== -1)
             return;
 
-        console.log(state.type, state.char, state.states);
+        debug(state.type, state.char, state.states);
 
         printed.push(state);
 
@@ -59,27 +61,25 @@ function State(type, char, isFinal) {
         if (this.isEClosure() && this.hasNext()) {
             var nextStates = this.getNext();
             for (var j = 0; j < nextStates.length; j++) {
-                if(nextStates[j].test(str)) {
+                if (nextStates[j].test(str)) {
                     return true;
                 }
             }
         }
 
-        console.log(str, ', char:', this.char, ', str[0]:', str[0]);
-        
         if (this.char === str[0]) {
-            console.log('match');
-            
+            debug('match');
+
             if (!this.hasNext()) {
                 return true;
             }
-            
-            console.log('to next, str:', str.substr(1));
-            
+
+            debug('to next, str:', str.substr(1));
+
             var nextStates = this.getNext();
             for (var j = 0; j < nextStates.length; j++) {
                 if (nextStates[j].test(str.substr(1))) {
-                    console.log('found state at', str);
+                    debug('found state at', str);
                     return true;
                 }
             }
@@ -91,9 +91,9 @@ function State(type, char, isFinal) {
 
 function NFA() {
     var FINAL = true;
-    
+
     var nfa = false;
-    
+
     var last = false;
 
     this.getNfa = function() {
@@ -103,7 +103,7 @@ function NFA() {
     this.getLastState = function() {
         return last;
     }
-    
+
     this.createFromSyntaxTree = function(syntaxTree, setFinal) {
         // instead of an initial state i just set an e-closure
         nfa = new State('e-closure');
@@ -113,7 +113,7 @@ function NFA() {
         if (setFinal) {
             last.isFinal = true;
         }
-        
+
         return nfa;
     }
 
@@ -143,7 +143,7 @@ function NFA() {
         for (var i = 0; i < node.nodes.length; i++) {
             lastState = addStates(lastState, node.nodes[i]);
         }
-        
+
         return lastState;
     }
 
@@ -152,12 +152,15 @@ function NFA() {
      */
     function alphabet(prevState, char) {
         var azState = new State('alphabet', char);
-        
+
         prevState.states.push(azState);
         
-        return azState;
+        var e1 = new State('e-closure');
+        azState.states.push(e1);
+
+        return e1;
     }
-    
+
     /**
      * Create NFA state for the OR operation
      */
@@ -174,10 +177,9 @@ function NFA() {
         } else {
             opn1First = opn1Last = new State('alphabet', opn1);
         }
-        
+
         e1.states.push(opn1First);
 
-        
         var opn2First = opn2Last = false;
         if (opn2 instanceof TreeNode) {
             var nfaInst = new NFA();
@@ -186,12 +188,13 @@ function NFA() {
         } else {
             opn2First = opn2Last = new State('alphabet', opn2);
         }
-        
+
         e2.states.push(opn2First);
 
-//        var stateOpn2 = opn2 instanceof TreeNode ? new NFA().createFromSyntaxTree(opn2).getLastState() :  new State('alphabet', opn2);
-//        e2.states.push(stateOpn2);
-        
+        // var stateOpn2 = opn2 instanceof TreeNode ? new
+        // NFA().createFromSyntaxTree(opn2).getLastState() : new
+        // State('alphabet', opn2);
+        // e2.states.push(stateOpn2);
 
         var e3 = new State('e-closure');
         opn1Last.states.push(e3);
