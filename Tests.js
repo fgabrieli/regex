@@ -199,32 +199,36 @@ var Tests = {
             str : 'h'
         } ])
 
-        this.test('abcdef+g*', [{
-            str: 'a',
-            expected: false
-        }, 
-        {
-            str: 'abcde',
+        this.test('abcdef+g*', [ {
+            str : 'a',
+            expected : false
+        }, {
+            str : 'abcde',
             expected : false
         }, {
             str : 'abcdefffff'
         }, {
             str : 'abcdefffffgggggggggggg'
-        }])
-        
-        this.test('a+b+c+d+e+f+g*|t', [{
+        } ])
+
+        this.test('a+b+c+d+e+f+g*|t', [ {
             str : 't'
         }, {
-            str: 'aaaabcdefg'
+            str : 'aaaabcdefg'
         }, {
-            str: 'tt'
-        }])
+            str : 'tt'
+        } ])
 
-        this.test('a', [{
-            str: 'b',
+        this.test('a', [ {
+            str : 'b',
             expected : false
-        }])
-        
+        } ])
+
+        this.test('abc', [ {
+            str : 'x',
+            expected : false
+        } ])
+
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }
 }
