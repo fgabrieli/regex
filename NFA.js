@@ -53,13 +53,6 @@ function State(type, char, isFinal) {
     }
 
     this.test = function(str) {
-        //console.log('checking state', this);
-        
-        /*
-        if (str.length == 0)
-            return true;
-        */
-
         if (this.isFinal)
             return true;
 
@@ -72,13 +65,21 @@ function State(type, char, isFinal) {
             }
         }
 
+        console.log(str, ', char:', this.char, ', str[0]:', str[0]);
+        
         if (this.char === str[0]) {
-            if (!this.hasNext())
+            console.log('match');
+            
+            if (!this.hasNext()) {
                 return true;
+            }
+            
+            console.log('to next, str:', str.substr(1));
             
             var nextStates = this.getNext();
             for (var j = 0; j < nextStates.length; j++) {
                 if (nextStates[j].test(str.substr(1))) {
+                    console.log('found state at', str);
                     return true;
                 }
             }
@@ -142,7 +143,7 @@ function NFA() {
         for (var i = 0; i < node.nodes.length; i++) {
             lastState = addStates(lastState, node.nodes[i]);
         }
-
+        
         return lastState;
     }
 
@@ -208,9 +209,15 @@ function NFA() {
         var e1 = new State('e-closure');
         opnState.states.push(e1);
 
-        prevState.states.push(e1);
+        var e2 = new State('e-closure');
+        e2.states.push(opnState);
+        e1.states.push(e2);
 
-        return e1;
+        var e3 = new State('e-closure');
+        e2.states.push(e3);
+        prevState.states.push(e3);
+
+        return e3;
     }
 
     function add(prevState, opn1) {
