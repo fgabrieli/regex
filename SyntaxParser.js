@@ -5,21 +5,14 @@
  */
 
 var LexicalAnalyzer = require('./LexicalAnalyzer').LexicalAnalyzer;
-
 var Symbol = require('./Symbol').Symbol;
-
-var symbolTable = require('./Symbol').symbolTable;
-
 var TreeNode = require('./TreeNode').TreeNode;
 
 var regHelper = require('./helper/RegexHelper').RegexHelper;
+var symbolTable = require('./Symbol').symbolTable;
 
 function SyntaxParser() {
-    var stack = [];
-
-    var tree = {};
-
-    var str = '';
+    var stack = [], tree = {}, str = '';
 
     this.parse = function(strToParse) {
         if (typeof strToParse === 'undefined' || strToParse.length === 0) {
@@ -35,15 +28,6 @@ function SyntaxParser() {
         do {
             var lexeme = lexAnalyzer.lexeme();
 
-//            if (lexAnalyzer.isSymbol()) {
-//                var subRegex = symbolTable.getByLexeme(lexeme).data;
-//                node = new SyntaxParser().parse(subRegex);
-//
-//                stack.push(node);
-//                
-//                addNode = false;
-//            } 
-            
             if (regHelper.isOr(lexeme)) {
                 node = or(lexAnalyzer);
 
@@ -63,9 +47,6 @@ function SyntaxParser() {
             if (addNode) {
                 if (!prevNode) {
                     prevNode = node;
-
-                    // only for the case when the regex has one node for it's
-                    // syntax tree, say "a|b"
                     parent = prevNode;
                 } else {
                     parent = new TreeNode('empty'); // connect pair of nodes
@@ -74,7 +55,7 @@ function SyntaxParser() {
                 }
 
                 addNode = false;
-                
+
                 stack = [];
             }
 
@@ -83,9 +64,9 @@ function SyntaxParser() {
         if (stack.length > 0) {
             for (var i = 0; i < stack.length; i++) {
                 var node = false;
-                
+
                 var entry = stack[i];
-                
+
                 if (entry[0] === '<') {
                     var subRegex = symbolTable.getByLexeme(entry).data;
                     node = new SyntaxParser().parse(subRegex);
@@ -94,7 +75,7 @@ function SyntaxParser() {
                         char : entry
                     })
                 }
-                
+
                 if (!prevNode) {
                     prevNode = node;
                     parent = prevNode;
@@ -105,7 +86,7 @@ function SyntaxParser() {
                 }
             }
         }
-        
+
         tree = parent;
 
         return tree;
@@ -113,21 +94,15 @@ function SyntaxParser() {
 
     function init(strToParse) {
         str = strToParse;
-        charIndex = 0;
+
         stack = [];
-    }
-
-    var charIndex = 0;
-
-    function nextChar() {
-        return charIndex < str.length ? str[charIndex++] : false;
     }
 
     function or(lexAnalyzer) {
         lexAnalyzer.prev();
-        
+
         var opn1 = lexAnalyzer.isSymbol() ? new SyntaxParser().parse(lexAnalyzer.lexeme()) : lexAnalyzer.lexeme();
-        
+
         lexAnalyzer.next();
         lexAnalyzer.next();
 
@@ -141,27 +116,27 @@ function SyntaxParser() {
 
     function add(lexAnalyzer) {
         lexAnalyzer.prev();
-        
+
         var node = new TreeNode('add', {
             opn1 : lexAnalyzer.lexeme()
         })
-        
+
         lexAnalyzer.next();
         lexAnalyzer.next();
-        
+
         return node;
     }
 
     function kleene(lexAnalyzer) {
         lexAnalyzer.prev();
-        
+
         var node = new TreeNode('kleene', {
             opn1 : lexAnalyzer.lexeme()
         })
-        
+
         lexAnalyzer.next();
         lexAnalyzer.next();
-        
+
         return node;
     }
 }

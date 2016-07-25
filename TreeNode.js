@@ -5,15 +5,17 @@
  */
 
 function TreeNode(type, data) {
+    // exposed for playing
     this.type = type ? type : '';
 
+    // exposed for playing
     this.data = data ? data : {};
 
-    // i leave this exposed for debugging purposes
+    // exposed for playing
     this.nodes = [];
 
     /**
-     * Print tree for the parsed regex.
+     * Print subtree
      */
     var indent = 0;
     

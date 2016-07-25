@@ -4,6 +4,10 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
+/**
+ * Runs all test cases for the regex compiler
+ */
+
 var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
 var SyntaxParser = require('./SyntaxParser').SyntaxParser;

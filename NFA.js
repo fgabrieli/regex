@@ -30,30 +30,6 @@ function State(type, char, isFinal) {
         return this.states && this.states.length > 0;
     }
 
-    /**
-     * Print tree for the parsed regex.
-     */
-    var printed = [];
-
-    this.print = function() {
-        printed = [];
-
-        printStates(this);
-    }
-
-    function printStates(state) {
-        if (printed.indexOf(state) !== -1)
-            return;
-
-        debug(state.type, state.char, state.states);
-
-        printed.push(state);
-
-        for (var i = 0; i < state.states.length; i++) {
-            printStates(state.states[i]);
-        }
-    }
-
     this.test = function(str) {
         if (this.isFinal)
             return true;
@@ -89,6 +65,9 @@ function State(type, char, isFinal) {
     }
 }
 
+/**
+ * Class to implement the NFA (nondeterministic finite automaton)
+ */
 function NFA() {
     var FINAL = true;
 
@@ -154,7 +133,7 @@ function NFA() {
         var azState = new State('alphabet', char);
 
         prevState.states.push(azState);
-        
+
         var e1 = new State('e-closure');
         azState.states.push(e1);
 
@@ -190,11 +169,6 @@ function NFA() {
         }
 
         e2.states.push(opn2First);
-
-        // var stateOpn2 = opn2 instanceof TreeNode ? new
-        // NFA().createFromSyntaxTree(opn2).getLastState() : new
-        // State('alphabet', opn2);
-        // e2.states.push(stateOpn2);
 
         var e3 = new State('e-closure');
         opn1Last.states.push(e3);

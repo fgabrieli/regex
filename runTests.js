@@ -4,6 +4,7 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
+// set to true for testing one regex at a time (i.e. if there is a test fail)
 var debug = false;
 
 if (debug) {
@@ -14,7 +15,7 @@ if (debug) {
     var regexStr = 'a';
 
     console.log('orig regex', regexStr);
-    
+
     var lexAnalyzer = new LexicalAnalyzer(regexStr);
     regexStr = lexAnalyzer.analyze();
 
