@@ -14,7 +14,8 @@ var symbolTable = require('./Symbol').symbolTable;
 function SyntaxParser() {
     var stack = [], tree = {}, str = '';
 
-    this.parse = function(strToParse) {
+    // XXX: optimize
+    function parse(strToParse) {
         if (typeof strToParse === 'undefined' || strToParse.length === 0) {
             throw 'Regex to be parsed is not valid';
         }
@@ -58,7 +59,6 @@ function SyntaxParser() {
 
                 stack = [];
             }
-
         } while (lexAnalyzer.next());
 
         if (stack.length > 0) {
@@ -139,6 +139,8 @@ function SyntaxParser() {
 
         return node;
     }
+    
+    this.parse = parse;
 }
 
 module.exports = {

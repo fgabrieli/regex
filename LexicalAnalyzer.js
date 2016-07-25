@@ -16,16 +16,20 @@ function LexicalAnalyzer(str) {
 
     this.analyze = function() {
         // precedence: +, *, |, alphabet
-        
+
         analyzeAdd();
 
         group();
 
         analyzeKleene();
-        
+
         group();
-        
+
         analyzeOr();
+
+        group();
+
+        analyzeSet();
 
         group();
 
@@ -50,7 +54,7 @@ function LexicalAnalyzer(str) {
 
                 var symbol = new Symbol(regex)
                 str = str.replace(regex, symbol.id);
-                
+
                 stack = [];
             }
         }
@@ -64,6 +68,23 @@ function LexicalAnalyzer(str) {
         } while (next());
 
         processStack();
+    }
+
+    // XXX: working here
+    function analyzeSet() {
+        resetIdx();
+
+        do {
+            if (isSet()) {
+                // XXX: expand
+                
+                var symbol = new Symbol(lexeme());
+
+                str = str.replace(lexeme(), symbol.id);
+
+                return analyzeAlphabet();
+            }
+        } while (next());
     }
 
     function analyzeAlphabet() {
@@ -172,8 +193,14 @@ function LexicalAnalyzer(str) {
 
         var start = i;
 
-        if (str[i++] == '<') {
+        var char = str[i++];
+
+        if (char == '<') { // symbol
             while (str[i++] != '>') {
+            }
+            ;
+        } else if (char == '[') { // set
+            while (str[i++] != ']') {
             }
             ;
         }
@@ -183,6 +210,10 @@ function LexicalAnalyzer(str) {
 
     function isSymbol() {
         return str[currentIdx] == '<';
+    }
+
+    function isSet() {
+        return str[currentIdx] == '[';
     }
 
     this.next = next;

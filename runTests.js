@@ -5,14 +5,14 @@
  */
 
 // set to true for testing one regex at a time (i.e. if there is a test fail)
-var debug = false;
+var debug = true;
 
 if (debug) {
     var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
     var NFA = require('./NFA.js').NFA;
 
-    var regexStr = 'a';
+    var regexStr = '[az]';
 
     console.log('orig regex', regexStr);
 
