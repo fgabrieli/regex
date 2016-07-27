@@ -232,6 +232,41 @@ var Tests = {
             str : 'x',
             expected : false
         } ])
+        
+        this.test('93n', [{
+            str : '93n'
+        }, {
+            str : '93ny'
+        }])
+        
+        this.test('a+b+c+d*', [{
+            str : 'abcd'
+        }])
+        
+        this.test('pp*', [{
+            str: 'q',
+            expected : false
+        }])
+        
+        this.test('fg', [{
+            str: 'fg@'
+        }])
+        
+        this.test('p+d*e+', [{
+            str : 'p',
+            expected : false
+        }, {
+            str: 'pde'
+        }, {
+            str : 'pe'
+        }, {
+            str : 'ep',
+            expected : false
+        }])
+        
+        this.test('p+d*|e+', [{
+            str : 'ep'
+        }])
 
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }
