@@ -5,14 +5,14 @@
  */
 
 // set to true for testing one regex at a time (i.e. if there is a test fail)
-var debug = true;
+var debug = false;
 
 if (debug) {
     var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
     var NFA = require('./NFA.js').NFA;
 
-    var regexStr = '[az]';
+    var regexStr = 'c*';
 
     console.log('orig regex', regexStr);
 
@@ -27,8 +27,9 @@ if (debug) {
 
     var nfaInst = new NFA();
     nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
+    nfaInst.print();
     var nfa = nfaInst.getNfa();
-    console.log(nfa.test('b'));
+    console.log(nfa.test('cc'));
 } else {
     var Tests = require('./Tests').Tests;
     Tests.run();
