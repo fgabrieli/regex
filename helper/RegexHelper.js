@@ -15,6 +15,10 @@ var RegexHelper = {
 
     isOr : function(c) {
         return c === '|';
+    },
+
+    isSet : function(str) {
+        return str[0] === '[';
     }
 }
 

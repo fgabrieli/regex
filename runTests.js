@@ -5,20 +5,20 @@
  */
 
 // set to true for testing one regex at a time (i.e. if there is a test fail)
-var debug = false;
+var debug = true;
 
 if (debug) {
     var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 
     var NFA = require('./NFA.js').NFA;
-
-    var regexStr = 'c*';
+    var regexStr = 'a|p*o';
 
     console.log('orig regex', regexStr);
 
     var lexAnalyzer = new LexicalAnalyzer(regexStr);
     regexStr = lexAnalyzer.analyze();
-
+    console.log(regexStr);
+    
     var SyntaxParser = require('./SyntaxParser').SyntaxParser;
 
     var syntaxParser = new SyntaxParser();
@@ -29,7 +29,7 @@ if (debug) {
     nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
     nfaInst.print();
     var nfa = nfaInst.getNfa();
-    console.log(nfa.test('cc'));
+    console.log(nfa.test('o'));
 } else {
     var Tests = require('./Tests').Tests;
     Tests.run();

@@ -71,6 +71,8 @@ function State(type, char, isFinal) {
     }
 
     this.test = function(str) {
+        console.log('testing', this.id, this.char, str);
+        
         if (this.isFinal)
             return true;
 

@@ -232,41 +232,56 @@ var Tests = {
             str : 'x',
             expected : false
         } ])
-        
-        this.test('93n', [{
+
+        this.test('93n', [ {
             str : '93n'
         }, {
             str : '93ny'
-        }])
-        
-        this.test('a+b+c+d*', [{
+        } ])
+
+        this.test('a+b+c+d*', [ {
             str : 'abcd'
-        }])
-        
-        this.test('pp*', [{
-            str: 'q',
+        } ])
+
+        this.test('pp*', [ {
+            str : 'q',
             expected : false
-        }])
-        
-        this.test('fg', [{
-            str: 'fg@'
-        }])
-        
-        this.test('p+d*e+', [{
+        } ])
+
+        this.test('fg', [ {
+            str : 'fg@'
+        } ])
+
+        this.test('p+d*e+', [ {
             str : 'p',
             expected : false
         }, {
-            str: 'pde'
+            str : 'pde'
         }, {
             str : 'pe'
         }, {
             str : 'ep',
             expected : false
-        }])
-        
-        this.test('p+d*|e+', [{
+        } ])
+
+        this.test('p+d*|e+', [ {
             str : 'ep'
-        }])
+        } ])
+
+        // notice the \\d because \ in strings must be escaped to obtain the
+        // superset \d
+        this.test('\\d|w', [ {
+            str : '0'
+        } ])
+
+        this.test('\\w*a', [ {
+            str : 'abc'
+        } ])
+
+        this.test('\\wabc', [ {
+            str : '8',
+            expected : false
+        } ])
 
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }

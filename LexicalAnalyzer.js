@@ -17,6 +17,10 @@ function LexicalAnalyzer(str) {
     this.analyze = function() {
         // precedence: +, *, |, alphabet
 
+        analyzeSuperSet();
+        
+        analyzeSet();
+
         analyzeAdd();
 
         group();
@@ -26,10 +30,6 @@ function LexicalAnalyzer(str) {
         group();
 
         analyzeOr();
-
-        group();
-
-        analyzeSet();
 
         group();
 
@@ -70,21 +70,60 @@ function LexicalAnalyzer(str) {
         processStack();
     }
 
+    function analyzeSuperSet() {
+        str = str.replace('\\d', '[0-9]');
+
+        str = str.replace('\\w', '[A-Za-z0-9_]');
+    }
+
     // XXX: working here
     function analyzeSet() {
         resetIdx();
 
         do {
-            if (isSet()) {
-                // XXX: expand
+            if (RegexHelper.isSet(lexeme())) {
+                var expanded = expand();
                 
-                var symbol = new Symbol(lexeme());
-
-                str = str.replace(lexeme(), symbol.id);
-
-                return analyzeAlphabet();
+                str = str.replace(lexeme(), expanded);
+                
+                console.log(str);
+                
+                return analyzeSet();
             }
         } while (next());
+    }
+    
+    function expand() {
+        var origLexeme = lexeme();
+        
+        var lex = origLexeme.replace('[', '').replace(']', '');
+
+        var pos = lex.indexOf('-');
+        while(pos !== -1) {
+            var start = lex[pos - 1];
+            var end = lex[pos + 1];
+
+            var expanded = [];
+
+            if (isNaN(start)) {
+                var startCode = start.charCodeAt(0);
+                var endCode = end.charCodeAt(0);
+                
+                for (var i = startCode; i <= endCode; i++) {
+                    expanded.push(String.fromCharCode(i));
+                }
+            } else {
+                for (var i = parseFloat(start); i <= parseFloat(end); i++) {
+                    expanded.push(i);
+                }
+            }
+            
+            lex = lex.replace(start + '-' + end, expanded.join(''));
+            
+            pos = lex.indexOf('-');
+        }
+
+        return lex.split('').join('|');
     }
 
     function analyzeAlphabet() {
@@ -210,10 +249,6 @@ function LexicalAnalyzer(str) {
 
     function isSymbol() {
         return str[currentIdx] == '<';
-    }
-
-    function isSet() {
-        return str[currentIdx] == '[';
     }
 
     this.next = next;
