@@ -1,0 +1,17 @@
+{
+  "name": "regex",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "https://github.com/fgabrieli/regex",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vis": "^4.16.1"
+  }
+}

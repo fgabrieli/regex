@@ -4,11 +4,17 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-var TreeNode = require('./TreeNode').TreeNode;
-
-var debug = require('./helper/Debug').debug;
-
+// var TreeNode = require('./TreeNode').TreeNode;
+//
+// var debug = require('./helper/Debug').debug;
 var stateId = 0;
+
+var tested = {};
+
+var calls = 0;
+
+
+
 
 function State(type, char, isFinal) {
     this.type = type;
@@ -43,6 +49,7 @@ function State(type, char, isFinal) {
     }
 
     this.getNext = function() {
+        // console.log('next', this.id, this.states);
         return this.states;
     }
 
@@ -70,29 +77,51 @@ function State(type, char, isFinal) {
         }
     }
 
-    this.test = function(str) {
-        console.log('testing', this.id, this.char, str);
+
+    this.test = function(str, from) {
+        calls ++;
         
+        if (calls > 300) {
+            console.log('too much recursion dude');
+            return false;
+        }
+
+        tested[this.id] = true;
+        
+        if (from) {
+            NFADebug.addPath(from, this);
+        }
+
+        console.log(this.id);
+
         if (this.isFinal)
             return true;
 
         if (this.isEClosure()) {
             var nextStates = this.getNext();
+
             for (var j = 0; j < nextStates.length; j++) {
-                if (nextStates[j].test(str)) {
+                var nextState = nextStates[j];
+                
+                if (tested[nextState.id])
+                    continue;
+                
+                if (nextState.test(str, this)) {
                     return true;
                 }
             }
         } else {
             if (this.char !== str[0]) {
                 if (str.length > 1) {
-                    return this.test(str.substr(1));
+                    this.test(str.substr(1), this);
                 }
             } else {
-                var nextStates = this.getNext();
-                for (var k = 0; k < nextStates.length; k++) {
-                    if (nextStates[k].test(str.substr(1))) {
-                        return true;
+                if (str.length > 1) {
+                    var nextStates = this.getNext();
+                    for (var k = 0; k < nextStates.length; k++) {
+                        if (nextStates[k].test(str.substr(1)), this) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -138,7 +167,12 @@ function NFA() {
     }
 
     this.test = function(str) {
+        calls = 0;
         return nfa.test(str);
+    }
+
+    this.draw = function(targetEl) {
+        NFADebug.draw(nfa, targetEl);
     }
 
     /**
@@ -228,8 +262,9 @@ function NFA() {
         opnState.add(e1);
 
         var e2 = new State('e-closure');
-        e2.add(opnState);
         e1.add(e2);
+
+        e2.add(prevState);
 
         var e3 = new State('e-closure');
         e2.add(e3);
@@ -243,7 +278,7 @@ function NFA() {
         prevState.add(opnState);
 
         var e1 = new State('e-closure');
-        e1.add(opnState);
+        e1.add(prevState);
 
         opnState.add(e1);
 

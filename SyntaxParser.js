@@ -4,12 +4,14 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-var LexicalAnalyzer = require('./LexicalAnalyzer').LexicalAnalyzer;
-var Symbol = require('./Symbol').Symbol;
-var TreeNode = require('./TreeNode').TreeNode;
+//var LexicalAnalyzer = require('./LexicalAnalyzer').LexicalAnalyzer;
+//var Symbol = require('./Symbol').Symbol;
+//var TreeNode = require('./TreeNode').TreeNode;
+//
+//var regHelper = require('./helper/RegexHelper').RegexHelper;
+//var symbolTable = require('./Symbol').symbolTable;
 
-var regHelper = require('./helper/RegexHelper').RegexHelper;
-var symbolTable = require('./Symbol').symbolTable;
+var regHelper = RegexHelper;
 
 function SyntaxParser() {
     var stack = [], tree = {}, str = '';

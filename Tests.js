@@ -8,11 +8,11 @@
  * Runs all test cases for the regex compiler
  */
 
-var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
-
-var SyntaxParser = require('./SyntaxParser').SyntaxParser;
-
-var NFA = require('./NFA.js').NFA;
+//var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
+//
+//var SyntaxParser = require('./SyntaxParser').SyntaxParser;
+//
+//var NFA = require('./NFA.js').NFA;
 
 var Tests = {
     debug : false,
@@ -30,15 +30,12 @@ var Tests = {
 
         var nfaInst = new NFA();
         nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
-        var nfa = nfaInst.getNfa();
 
         for (var i = 0; i < cases.length; i++) {
             if (this.debug) {
                 console.log('running case: ', origRegex, cases[i].str);
 
                 syntaxTree.print();
-
-                console.log(nfa);
             }
 
             var str = cases[i].str;
@@ -46,7 +43,7 @@ var Tests = {
             // expected is true by default
             var expected = typeof cases[i].expected !== 'undefined' ? cases[i].expected : true;
 
-            if (nfa.test(str) != expected) {
+            if (nfaInst.test(str) != expected) {
                 throw 'Failed case with string: "' + str + '" for regex ' + origRegex + ', expecting ' + expected;
             }
         }
@@ -282,6 +279,11 @@ var Tests = {
             str : '8',
             expected : false
         } ])
+        
+        this.test('a|p*o', [{
+            str : 'x',
+            expected : false
+        }])
 
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }
