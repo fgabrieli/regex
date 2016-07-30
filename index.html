@@ -1,42 +1,63 @@
+<!-- Regex engine -->
 <html>
 <head>
 
-<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-    crossorigin="anonymous"></script>
+<!-- external libs -->
+<script src="bower_components/jQuery/dist/jquery.min.js"></script>
 <script src="bower_components/vis/dist/vis.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
 
-<script>
-    module = {};
-</script>
+<!-- regex engine -->
+<script src="engine/TreeNode.js"></script>
+<script src="engine/helper/Debug.js"></script>
+<script src="engine/helper/RegexHelper.js"></script>
+<script src="engine/LexicalAnalyzer.js"></script>
+<script src="engine/SyntaxParser.js"></script>
+<script src="engine/Symbol.js"></script>
+<script src="engine/NFA.js"></script>
+<script src="engine/helper/NFADebug.js"></script>
+<script src="engine/Tests.js"></script>
 
-<script src="TreeNode.js"></script>
+<!-- ui specific -->
+<script src="js/app.js"></script>
 
-<script src="helper/Debug.js"></script>
-<script src="helper/RegexHelper.js"></script>
-<script src="LexicalAnalyzer.js"></script>
-
-<script src="SyntaxParser.js"></script>
-
-<script src="Symbol.js"></script>
-<script src="NFA.js"></script>
-
-<script src="helper/NFADebug.js"></script>
-
-<script src="Tests.js"></script>
-
-<script src="App.js"></script>
+<!-- ui -->
+<link rel="stylesheet" href="css/regex.css" type="text/css" />
 
 </head>
 
-<body>
-    <div class="debugger">
-        <span id="looking-for" style="font-size: 24px"></span>
-        <button onClick="Tests.run()">Run Tests! (cross your fingers dude)</button> <span id="testRunning"></span>
+<body id="regex">
+    <div class="container" id="panel">
+        <div class="row">
+            <div class="col-md-12 looking-for-info" style="font-size: 110%">
+                Looking for char: <span id="looking-for" style="font-size: 110%">*</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+
+                <div class="form-group">
+                    <label for="regex">Regex:</label> <input type="text" class="form-control" id="regex">
+                </div>
+                <div class="form-group string">
+                    <label for="search">String:</label> <input type="text" class="form-control" id="search">
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-default">Test my regex</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="nfa"></div>
+            </div>
+        </div>
+
     </div>
-
-    <div id="graph"></div>
-
-
 </body>
 
 </html>

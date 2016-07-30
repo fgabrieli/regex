@@ -4,12 +4,7 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-// var TreeNode = require('./TreeNode').TreeNode;
-//
-// var debug = require('./helper/Debug').debug;
 var stateId = 0;
-
-// var tested = {};
 
 var calls = 0;
 
@@ -116,12 +111,12 @@ function NFA() {
         idx = 0;
         NFADebug.reset();
         NFADebug.net.selectNodes([]);
-        
+
         // ids visited
         allTheVisits = [];
-        
+
         statesVisited = [];
-        
+
         calls = 0;
 
         s = this.eclosure(nfa);
@@ -132,13 +127,12 @@ function NFA() {
             if (s === false) {
                 s = nfa;
             }
-            
-            //debugger;
+
+            // debugger;
 
             c = nextChar();
         } while (c);
 
-        
         return hasFinal(statesVisited);
     }
 
@@ -375,8 +369,4 @@ function NFA() {
 
         return e1;
     }
-}
-
-module.exports = {
-    NFA : NFA
 }

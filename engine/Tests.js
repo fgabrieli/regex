@@ -8,11 +8,6 @@
  * Runs all test cases for the regex compiler
  */
 
-// var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
-//
-// var SyntaxParser = require('./SyntaxParser').SyntaxParser;
-//
-// var NFA = require('./NFA.js').NFA;
 var Tests = {
     debug : false,
 

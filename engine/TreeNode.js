@@ -18,27 +18,23 @@ function TreeNode(type, data) {
      * Print subtree
      */
     var indent = 0;
-    
+
     this.print = function() {
         indent = 0;
-        
+
         printNode(this);
-    } 
-    
+    }
+
     function printNode(node) {
         var whiteSpace = Array(indent * 4).join(' ');
         console.log(whiteSpace, node.type, node.data);
 
         indent++;
-        
+
         for (var i = 0; i < node.nodes.length; i++) {
             printNode(node.nodes[i]);
         }
-        
+
         indent--;
     }
-}
-
-module.exports = {
-    TreeNode : TreeNode
 }

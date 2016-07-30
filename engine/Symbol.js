@@ -27,8 +27,3 @@ function Symbol(data) {
 }
 
 var symbolTable = new SymbolTable();
-
-module.exports = {
-    symbolTable : symbolTable,
-    Symbol : Symbol
-}

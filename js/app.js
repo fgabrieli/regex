@@ -20,7 +20,7 @@ $(document).ready(function() {
     nfaInst = new NFA();
     nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
 
-    nfaInst.draw($('#graph').get(0));
+    nfaInst.draw($('#nfa').get(0));
 
     // console.log(nfaInst.test2('abbbbcccddddt'));
 

@@ -4,14 +4,6 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-//var extend = require('extend');
-//
-//var RegexHelper = require('./helper/RegexHelper').RegexHelper;
-//
-//var Symbol = require('./Symbol').Symbol;
-//
-//var symbolTable = require('./Symbol');
-
 function LexicalAnalyzer(str) {
     var currentIdx = 0;
 
@@ -259,8 +251,4 @@ function LexicalAnalyzer(str) {
     this.lexeme = lexeme;
 
     this.isSymbol = isSymbol;
-}
-
-module.exports = {
-    LexicalAnalyzer : LexicalAnalyzer
 }

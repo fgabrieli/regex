@@ -4,15 +4,6 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-//var LexicalAnalyzer = require('./LexicalAnalyzer').LexicalAnalyzer;
-//var Symbol = require('./Symbol').Symbol;
-//var TreeNode = require('./TreeNode').TreeNode;
-//
-//var regHelper = require('./helper/RegexHelper').RegexHelper;
-//var symbolTable = require('./Symbol').symbolTable;
-
-var regHelper = RegexHelper;
-
 function SyntaxParser() {
     var stack = [], tree = {}, str = '';
 
@@ -31,15 +22,15 @@ function SyntaxParser() {
         do {
             var lexeme = lexAnalyzer.lexeme();
 
-            if (regHelper.isOr(lexeme)) {
+            if (RegexHelper.isOr(lexeme)) {
                 node = or(lexAnalyzer);
 
                 addNode = true;
-            } else if (regHelper.isAdd(lexeme)) {
+            } else if (RegexHelper.isAdd(lexeme)) {
                 node = add(lexAnalyzer);
 
                 addNode = true;
-            } else if (regHelper.isKleene(lexeme)) {
+            } else if (RegexHelper.isKleene(lexeme)) {
                 node = kleene(lexAnalyzer);
 
                 addNode = true;
@@ -141,10 +132,6 @@ function SyntaxParser() {
 
         return node;
     }
-    
-    this.parse = parse;
-}
 
-module.exports = {
-    SyntaxParser : SyntaxParser
+    this.parse = parse;
 }
