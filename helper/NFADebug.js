@@ -22,7 +22,7 @@ var NFADebug = {
 
     reset : function() {
         this.step = -1;
-        
+
         this.path = [];
     },
 
@@ -76,7 +76,7 @@ var NFADebug = {
         var stepData = this.path[--this.step];
 
         $('#looking-for').html(stepData.lookingFor);
-        
+
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
 
@@ -124,9 +124,27 @@ var NFADebug = {
         }
 
         function getNode(state) {
+            var color = false;
+
+            if (state.isFinal) {
+                color = {
+                    background : 'white',
+                    border : 'red'
+                };
+            } else if (state.id === 0) {
+                color = {
+                    background : 'white',
+                    border : 'green'
+                }
+            } else {
+                color = {
+                    background : 'white'
+                };
+            }
+
             return {
                 id : state.id,
-                color : state.isFinal === true ? {background : 'white', border : 'red'} : {background : 'white'},
+                color : color,
                 label : state.id
             }
         }

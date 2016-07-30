@@ -13,11 +13,12 @@
 // var SyntaxParser = require('./SyntaxParser').SyntaxParser;
 //
 // var NFA = require('./NFA.js').NFA;
-
 var Tests = {
     debug : false,
 
     success : 0,
+
+    isTesting : false,
 
     test : function(regexStr, cases) {
         var origRegex = regexStr;
@@ -48,6 +49,8 @@ var Tests = {
     },
 
     run : function() {
+        this.isTesting = true;
+
         this.test('a+b+c+d+e+f+g*|t', [ {
             str : 't'
         }, {
@@ -259,23 +262,25 @@ var Tests = {
 
         // notice the \\d because \ in strings must be escaped to obtain the
         // superset \d
-        this.test('\\d|w', [ {
-            str : '0'
-        } ])
-
-        this.test('\\w*a', [ {
-            str : 'abc'
-        } ])
-
-        this.test('\\wabc', [ {
-            str : '8',
-            expected : false
-        } ])
+//        this.test('\\d|w', [ {
+//            str : '0'
+//        } ])
+//
+//        this.test('\\w*a', [ {
+//            str : 'abc'
+//        } ])
+//
+//        this.test('\\wabc', [ {
+//            str : '8',
+//            expected : false
+//        } ])
 
         this.test('a|p*o', [ {
             str : 'x',
             expected : false
         } ])
+
+        this.isTesting = true;
 
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }

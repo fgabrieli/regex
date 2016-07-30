@@ -102,6 +102,155 @@ function NFA() {
         return last;
     }
 
+    function nextChar() {
+        if (idx === str.length)
+            return false;
+
+        return str[idx++];
+    }
+
+    var idx = 0;
+    var str = '';
+
+    this.test = function(strToTest) {
+        str = strToTest;
+
+        idx = 0;
+        NFADebug.reset();
+        NFADebug.net.selectNodes([]);
+        
+        // ids visited
+        allTheVisits = [];
+        
+        statesVisited = [];
+        
+        calls = 0;
+
+        s = this.eclosure(nfa);
+
+        var c = nextChar();
+        do {
+            s = this.eclosure(this.move(s, c));
+            if (s === false) {
+                s = nfa;
+            }
+            
+            //debugger;
+
+            c = nextChar();
+        } while (c);
+
+        
+        return hasFinal(statesVisited);
+    }
+
+    function hasFinal(s) {
+        for (var i = 0; i < s.length; i++) {
+            if (s[i].isFinal)
+                return true;
+        }
+
+        return false;
+    }
+
+    this.move = function(s, c) {
+        var visited = [];
+
+        var from = nfa;
+
+        var found = false;
+        if (s instanceof Array) {
+            for (var i = 0; i < s.length; i++) {
+                var found = m(from, s[i], c);
+                if (found)
+                    return found;
+            }
+        } else {
+            found = m(from, s, c);
+        }
+
+        allTheVisits = allTheVisits.concat(visited);
+
+        if (!Tests.isTesting)
+            NFADebug.net.selectNodes(allTheVisits);
+
+        return found;
+
+        function m(from, s, c) {
+            visited.push(s.id);
+            statesVisited.push(s);
+
+            NFADebug.addPath(from, s, c);
+
+            for (var i = 0; i < s.states.length; i++) {
+                var curr = s.states[i];
+
+                if (visited.indexOf(curr.id) !== -1)
+                    continue;
+
+                if (curr.isEClosure()) {
+                    var found = m(s, curr, c);
+                    if (found)
+                        return found;
+                } else {
+                    if (curr.char === c) {
+                        NFADebug.addPath(s, curr, c);
+
+                        return curr;
+                    }
+                }
+            }
+
+            // not found
+            return false;
+        }
+    }
+
+    var allTheVisits = [];
+
+    this.eclosure = function(s) {
+        if (s === false)
+            return false;
+
+        var visited = [];
+        var eclosures = [];
+
+        var from = nfa;
+
+        e(from, s);
+
+        allTheVisits = allTheVisits.concat(visited);
+
+        if (!Tests.isTesting)
+            NFADebug.net.selectNodes(allTheVisits);
+
+        return eclosures;
+
+        function e(from, s) {
+            visited.push(s.id);
+            statesVisited.push(s);
+
+            if (s.isEClosure())
+                eclosures.push(s);
+
+            NFADebug.addPath(from, s, '');
+
+            if (typeof s.states === 'undefined')
+                debugger;
+
+            for (var i = 0; i < s.states.length; i++) {
+                var curr = s.states[i];
+
+                if (visited.indexOf(curr.id) !== -1)
+                    continue;
+
+                if (curr.isEClosure())
+                    e(s, curr);
+            }
+        }
+
+    }
+
     this.createFromSyntaxTree = function(syntaxTree, setFinal) {
         // instead of an initial state i just set an e-closure
         nfa = new State('e-closure');
@@ -113,120 +262,6 @@ function NFA() {
         }
 
         return nfa;
-    }
-
-    var currState = {};
-
-    function moveTo(newState) {
-        currState = newState;
-    }
-
-    var visited = {};
-
-    function search(char, state, from, stop) {
-        calls++;
-        if (calls > 300) {
-            console.error('too much recursion dude, going out');
-            return false;
-        }
-
-        if (typeof state === 'undefined')
-            state = currState;
-
-        visited[state.id] = true;
-
-        if (from) {
-            NFADebug.addPath(from, state, char);
-        }
-
-        if (!state.isEClosure()) {
-            if (state.char === char) {
-                return state;
-            } else if (stop === true) {
-                return false;
-            }
-        }
-
-        var nextStates = state.getNext();
-        for (var k = 0; k < nextStates.length; k++) {
-            if (visited[nextStates[k].id])
-                continue;
-
-            var foundState = search(char, nextStates[k], state, true);
-            if (foundState) {
-                return foundState;
-            }
-        }
-
-        return false;
-    }
-
-    function findFinal(from, state) {
-        calls++;
-
-        if (calls > 300) {
-            console.error('too much recursion dude, going out');
-            return false;
-        }
-
-        if (typeof state === 'undefined') {
-            state = currState;
-        }
-
-        visited[state.id] = true;
-
-        if (from) {
-            NFADebug.addPath(from, state, '[final]');
-        }
-
-        if (state.isFinal)
-            return true;
-
-        var nextStates = state.getNext();
-        for (var k = 0; k < nextStates.length; k++) {
-            var next = nextStates[k];
-            if (next.isEClosure() && !visited[next.id]) {
-                if (findFinal(state, next)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    this.test2 = function(str) {
-        calls = 0;
-        NFADebug.reset();
-
-        moveTo(nfa);
-
-        var eat = function() {
-            var char = str[0];
-
-            str = str.substr(1);
-
-            return char;
-        }
-
-        while (str.length > 0) {
-            var char = eat();
-            
-            visited = {};
-
-            var state = search(char);
-            if (state) {
-                if (state.isFinal) {
-                    return true;
-                }
-
-                moveTo(state);
-            } else {
-                moveTo(nfa);
-            }
-        }
-
-        return findFinal();
     }
 
     this.draw = function(targetEl) {
