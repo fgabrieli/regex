@@ -4,7 +4,6 @@
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
     crossorigin="anonymous"></script>
 <script src="bower_components/vis/dist/vis.min.js"></script>
-<script src="App.js"></script>
 
 <script>
     module = {};
@@ -22,12 +21,17 @@
 <script src="NFA.js"></script>
 
 <script src="helper/NFADebug.js"></script>
+
+<script src="Tests.js"></script>
+
+<script src="App.js"></script>
+
 </head>
 
 <body>
-    <div class="debugger">Debugger<br />
-        <button onClick="NFADebug.prevStep()">Prev</button>
-        <button onClick="NFADebug.nextStep()">Next</button>
+    <div class="debugger">
+        <span id="looking-for" style="font-size: 24px"></span>
+        <button onClick="Tests.run()">Run Tests! (cross your fingers dude)</button> <span id="testRunning"></span>
     </div>
 
     <div id="graph"></div>

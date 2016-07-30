@@ -9,12 +9,9 @@
 // var debug = require('./helper/Debug').debug;
 var stateId = 0;
 
-var tested = {};
+// var tested = {};
 
 var calls = 0;
-
-
-
 
 function State(type, char, isFinal) {
     this.type = type;
@@ -31,6 +28,10 @@ function State(type, char, isFinal) {
     this.states = [];
 
     this.from = [];
+
+    // visited indicates if this state was already visited, we will always
+    // choose the one with less visits
+    this.visits = 0;
 
     this.add = function() {
         for (var i = 0; i < arguments.length; i++) {
@@ -77,58 +78,6 @@ function State(type, char, isFinal) {
         }
     }
 
-
-    this.test = function(str, from) {
-        calls ++;
-        
-        if (calls > 300) {
-            console.log('too much recursion dude');
-            return false;
-        }
-
-        tested[this.id] = true;
-        
-        if (from) {
-            NFADebug.addPath(from, this);
-        }
-
-        console.log(this.id);
-
-        if (this.isFinal)
-            return true;
-
-        if (this.isEClosure()) {
-            var nextStates = this.getNext();
-
-            for (var j = 0; j < nextStates.length; j++) {
-                var nextState = nextStates[j];
-                
-                if (tested[nextState.id])
-                    continue;
-                
-                if (nextState.test(str, this)) {
-                    return true;
-                }
-            }
-        } else {
-            if (this.char !== str[0]) {
-                if (str.length > 1) {
-                    this.test(str.substr(1), this);
-                }
-            } else {
-                if (str.length > 1) {
-                    var nextStates = this.getNext();
-                    for (var k = 0; k < nextStates.length; k++) {
-                        if (nextStates[k].test(str.substr(1)), this) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 }
 
 /**
@@ -166,9 +115,118 @@ function NFA() {
         return nfa;
     }
 
-    this.test = function(str) {
+    var currState = {};
+
+    function moveTo(newState) {
+        currState = newState;
+    }
+
+    var visited = {};
+
+    function search(char, state, from, stop) {
+        calls++;
+        if (calls > 300) {
+            console.error('too much recursion dude, going out');
+            return false;
+        }
+
+        if (typeof state === 'undefined')
+            state = currState;
+
+        visited[state.id] = true;
+
+        if (from) {
+            NFADebug.addPath(from, state, char);
+        }
+
+        if (!state.isEClosure()) {
+            if (state.char === char) {
+                return state;
+            } else if (stop === true) {
+                return false;
+            }
+        }
+
+        var nextStates = state.getNext();
+        for (var k = 0; k < nextStates.length; k++) {
+            if (visited[nextStates[k].id])
+                continue;
+
+            var foundState = search(char, nextStates[k], state, true);
+            if (foundState) {
+                return foundState;
+            }
+        }
+
+        return false;
+    }
+
+    function findFinal(from, state) {
+        calls++;
+
+        if (calls > 300) {
+            console.error('too much recursion dude, going out');
+            return false;
+        }
+
+        if (typeof state === 'undefined') {
+            state = currState;
+        }
+
+        visited[state.id] = true;
+
+        if (from) {
+            NFADebug.addPath(from, state, '[final]');
+        }
+
+        if (state.isFinal)
+            return true;
+
+        var nextStates = state.getNext();
+        for (var k = 0; k < nextStates.length; k++) {
+            var next = nextStates[k];
+            if (next.isEClosure() && !visited[next.id]) {
+                if (findFinal(state, next)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    this.test2 = function(str) {
         calls = 0;
-        return nfa.test(str);
+        NFADebug.reset();
+
+        moveTo(nfa);
+
+        var eat = function() {
+            var char = str[0];
+
+            str = str.substr(1);
+
+            return char;
+        }
+
+        while (str.length > 0) {
+            var char = eat();
+            
+            visited = {};
+
+            var state = search(char);
+            if (state) {
+                if (state.isFinal) {
+                    return true;
+                }
+
+                moveTo(state);
+            } else {
+                moveTo(nfa);
+            }
+        }
+
+        return findFinal();
     }
 
     this.draw = function(targetEl) {

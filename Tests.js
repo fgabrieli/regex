@@ -8,11 +8,11 @@
  * Runs all test cases for the regex compiler
  */
 
-//var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
+// var LexicalAnalyzer = require('./LexicalAnalyzer.js').LexicalAnalyzer;
 //
-//var SyntaxParser = require('./SyntaxParser').SyntaxParser;
+// var SyntaxParser = require('./SyntaxParser').SyntaxParser;
 //
-//var NFA = require('./NFA.js').NFA;
+// var NFA = require('./NFA.js').NFA;
 
 var Tests = {
     debug : false,
@@ -32,30 +32,30 @@ var Tests = {
         nfaInst.createFromSyntaxTree(syntaxTree, true); // true = set as final
 
         for (var i = 0; i < cases.length; i++) {
-            if (this.debug) {
-                console.log('running case: ', origRegex, cases[i].str);
-
-                syntaxTree.print();
-            }
-
             var str = cases[i].str;
 
             // expected is true by default
             var expected = typeof cases[i].expected !== 'undefined' ? cases[i].expected : true;
 
-            if (nfaInst.test(str) != expected) {
-                throw 'Failed case with string: "' + str + '" for regex ' + origRegex + ', expecting ' + expected;
+            var result = nfaInst.test(str);
+            if (result !== expected) {
+                throw 'Failed case with string: "' + str + '" for regex ' + origRegex + ', expecting ' + expected + ', outcome: ' + result;
+                break;
             }
-        }
-
-        if (this.debug) {
-            console.log(cases.length, 'case(s) executed successfully');
         }
 
         this.success += cases.length;
     },
 
     run : function() {
+        this.test('a+b+c+d+e+f+g*|t', [ {
+            str : 't'
+        }, {
+            str : 'aaaabcdefg'
+        }, {
+            str : 'tt'
+        } ])
+
         this.test('c*', [ {
             str : 'c',
             expected : true
@@ -212,14 +212,6 @@ var Tests = {
             str : 'abcdefffffgggggggggggg'
         } ])
 
-        this.test('a+b+c+d+e+f+g*|t', [ {
-            str : 't'
-        }, {
-            str : 'aaaabcdefg'
-        }, {
-            str : 'tt'
-        } ])
-
         this.test('a', [ {
             str : 'b',
             expected : false
@@ -279,11 +271,11 @@ var Tests = {
             str : '8',
             expected : false
         } ])
-        
-        this.test('a|p*o', [{
+
+        this.test('a|p*o', [ {
             str : 'x',
             expected : false
-        }])
+        } ])
 
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }

@@ -18,6 +18,26 @@ var NFADebug = {
         this.bindKeys();
     },
 
+    loop : false,
+
+    reset : function() {
+        this.step = -1;
+        
+        this.path = [];
+    },
+
+    play : function() {
+        this.step = -1;
+
+        var t = this;
+
+        for (var i = 0; i < this.path.length; i++) {
+            setTimeout(function() {
+                t.nextStep();
+            }, i * 1000);
+        }
+    },
+
     bindKeys : function() {
         var t = this;
 
@@ -38,10 +58,14 @@ var NFADebug = {
         this.net.selectEdges([ edgeId ]);
     },
 
-    addPath : function(from, to) {
+    addPath : function(from, to, lookingFor) {
+        if (from.id === to.id)
+            return;
+
         this.path.push({
             from : from,
-            to : to
+            to : to,
+            lookingFor : lookingFor
         });
     },
 
@@ -51,6 +75,8 @@ var NFADebug = {
 
         var stepData = this.path[--this.step];
 
+        $('#looking-for').html(stepData.lookingFor);
+        
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
 
@@ -59,6 +85,8 @@ var NFADebug = {
             return;
 
         var stepData = this.path[++this.step];
+
+        $('#looking-for').text(stepData.lookingFor);
 
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
@@ -98,6 +126,7 @@ var NFADebug = {
         function getNode(state) {
             return {
                 id : state.id,
+                color : state.isFinal === true ? {background : 'white', border : 'red'} : {background : 'white'},
                 label : state.id
             }
         }

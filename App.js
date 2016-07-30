@@ -1,6 +1,7 @@
 $(document).ready(function() {
-    // var regexStr = 'a+b*c*d+|c+d+e+';
-    var regexStr = 'p|c*o';
+    //var regexStr = 'a+b*c*d+|c+d+e+';
+    var regexStr = 'a+b+c+d+e+f+g*|t';
+    //var regexStr = 'c|q*o';
     
     console.log('orig regex', regexStr);
 
@@ -19,10 +20,6 @@ $(document).ready(function() {
 
     // nfaInst.print();
 
-    setTimeout(function() {
-        var nfa = nfaInst.getNfa();
-        console.log(nfa.test('o'));
-    }, 2000);
+    console.log(nfaInst.test2('abbbbcccddddt'));
 
 })
-
