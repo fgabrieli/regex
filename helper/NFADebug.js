@@ -1,24 +1,25 @@
 /**
- * Helper to draw NFAs using Vis class.
+ * Helper to draw and "debug" NFAs using Vis library.
  * 
- * @require visjs.org
+ * @see http://visjs.org
+ * 
+ * @author Fernando Gabrieli, fgabrieli at github
  */
 
 var NFADebug = {
     // VIS (lib) network
     net : {},
 
-    // path followed while testing a regex to debug it
+    // path followed while testing a regex so we can re-play it
     path : [],
 
     // step in the path (see above)
     step : -1,
 
     init : function() {
+        // allow left-key and right-key to rewind/forward the test
         this.bindKeys();
     },
-
-    loop : false,
 
     reset : function() {
         this.step = -1;
@@ -26,21 +27,10 @@ var NFADebug = {
         this.path = [];
     },
 
-    play : function() {
-        this.step = -1;
-
-        var t = this;
-
-        for (var i = 0; i < this.path.length; i++) {
-            setTimeout(function() {
-                t.nextStep();
-            }, i * 1000);
-        }
-    },
-
     bindKeys : function() {
         var t = this;
 
+        // allow left-key and right-key to rewind/forward the test
         $(document).keydown(function(e) {
             switch (e.which) {
             case 37: // left
@@ -58,6 +48,11 @@ var NFADebug = {
         this.net.selectEdges([ edgeId ]);
     },
 
+    selectNodes : function(nodes) {
+        var n = typeof nodes !== 'array' ? [ nodes ] : n;
+        this.net.selectNodes(n);
+    },
+
     addPath : function(from, to, lookingFor) {
         if (from.id === to.id)
             return;
@@ -66,9 +61,13 @@ var NFADebug = {
             from : from,
             to : to,
             lookingFor : lookingFor
+        // char we are looking for
         });
     },
 
+    /**
+     * Go backwards when debugging.
+     */
     prevStep : function() {
         if (this.step <= 0)
             return;
@@ -80,6 +79,9 @@ var NFADebug = {
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
 
+    /**
+     * Go forward when debugging.
+     */
     nextStep : function() {
         if (this.step + 1 == this.path.length)
             return;
@@ -91,6 +93,14 @@ var NFADebug = {
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
 
+    /**
+     * Draw the NFA using Vis library.
+     * 
+     * @param State
+     *            instance
+     * @param DOM
+     *            element to render the graph to
+     */
     draw : function(nfa, targetEl) {
         var visited = [];
 
@@ -98,7 +108,10 @@ var NFADebug = {
 
         var edges = [];
 
-        visit(nfa);
+        visit.call(this, nfa);
+
+        this.render(targetEl, nodes, edges);
+
 
         function visit(state) {
             if (visited.indexOf(state) !== -1)
@@ -106,7 +119,7 @@ var NFADebug = {
 
             visited.push(state);
 
-            nodes.push(getNode(state));
+            nodes.push(this.getNodeData(state));
 
             for (var i = 0; i < state.states.length; i++) {
                 var nextState = state.states[i];
@@ -119,37 +132,35 @@ var NFADebug = {
                     label : nextState.isEClosure() ? '(E)' : nextState.char
                 });
 
-                visit(state.states[i]);
+                visit.call(this, state.states[i]);
             }
         }
+    },
 
-        function getNode(state) {
-            var color = false;
+    getNodeData : function(state) {
+        var color = false;
 
-            if (state.isFinal) {
-                color = {
-                    background : 'white',
-                    border : 'red'
-                };
-            } else if (state.id === 0) {
-                color = {
-                    background : 'white',
-                    border : 'green'
-                }
-            } else {
-                color = {
-                    background : 'white'
-                };
+        if (state.id === 0) { // initial state
+            color = {
+                background : 'white',
+                border : 'green'
             }
-
-            return {
-                id : state.id,
-                color : color,
-                label : state.id
-            }
+        } else if (state.isFinal) {
+            color = {
+                background : 'white',
+                border : 'red'
+            };
+        } else {
+            color = {
+                background : 'white'
+            };
         }
 
-        this.render(targetEl, nodes, edges);
+        return {
+            id : state.id,
+            color : color,
+            label : state.id
+        }
     },
 
     render : function(targetEl, nodeData, edgeData) {

@@ -37,8 +37,6 @@ function State(type, char, isFinal) {
         for (var i = 0; i < arguments.length; i++) {
             var state = arguments[i];
 
-            console.log(this.id, state.id, this.isEClosure() ? 'e-closure' : this.char, ' -->', state.isEClosure() ? 'e-closure' : state.char);
-
             state.from.push(this.id);
 
             this.states.push(state);

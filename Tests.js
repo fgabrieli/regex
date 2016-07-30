@@ -25,6 +25,7 @@ var Tests = {
 
         var lexAnalyzer = new LexicalAnalyzer(regexStr);
         regexStr = lexAnalyzer.analyze();
+        console.log(regexStr);
 
         var syntaxParser = new SyntaxParser();
         var syntaxTree = syntaxParser.parse(regexStr);
@@ -49,6 +50,8 @@ var Tests = {
     },
 
     run : function() {
+        this.success = 0;
+
         this.isTesting = true;
 
         this.test('a+b+c+d+e+f+g*|t', [ {
@@ -262,23 +265,26 @@ var Tests = {
 
         // notice the \\d because \ in strings must be escaped to obtain the
         // superset \d
-//        this.test('\\d|w', [ {
-//            str : '0'
-//        } ])
-//
-//        this.test('\\w*a', [ {
-//            str : 'abc'
-//        } ])
-//
-//        this.test('\\wabc', [ {
-//            str : '8',
-//            expected : false
-//        } ])
+        this.test('\\d|w', [ {
+            str : '0'
+        } ])
 
         this.test('a|p*o', [ {
             str : 'x',
             expected : false
         } ])
+
+        this.test('\\wabc', [ {
+            str : '8',
+            expected : false
+        } ])
+
+
+        // XXX: still failing here, god help us
+         this.test('\\w*a', [ {
+            str : 'abca'
+        } ])
+        
 
         this.isTesting = true;
 
