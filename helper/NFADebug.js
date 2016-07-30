@@ -10,10 +10,30 @@ var NFADebug = {
 
     // path followed while testing a regex to debug it
     path : [],
-    
+
     // step in the path (see above)
     step : -1,
-    
+
+    init : function() {
+        this.bindKeys();
+    },
+
+    bindKeys : function() {
+        var t = this;
+
+        $(document).keydown(function(e) {
+            switch (e.which) {
+            case 37: // left
+                t.prevStep();
+                break;
+
+            case 39: // right
+                t.nextStep();
+                break;
+            }
+        });
+    },
+
     selectEdge : function(edgeId) {
         this.net.selectEdges([ edgeId ]);
     },
@@ -24,20 +44,20 @@ var NFADebug = {
             to : to
         });
     },
-    
+
     prevStep : function() {
-        if (this.step == 0)
+        if (this.step <= 0)
             return;
-            
+
         var stepData = this.path[--this.step];
 
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
-    
+
     nextStep : function() {
-        if (this.step == this.path.length)
+        if (this.step + 1 == this.path.length)
             return;
-        
+
         var stepData = this.path[++this.step];
 
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
@@ -119,4 +139,10 @@ var NFADebug = {
 
         this.net = new vis.Network(container, data, options);
     }
+}
+
+{
+    $(document).ready(function() {
+        NFADebug.init();
+    })
 }
