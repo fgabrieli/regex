@@ -9,13 +9,14 @@
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
 
 <!-- regex engine -->
-<script src="engine/TreeNode.js"></script>
+<script src="engine/helper/UniqueId.js"></script>
 <script src="engine/helper/RegexHelper.js"></script>
+<script src="engine/helper/NFADebug.js"></script>
+<script src="engine/TreeNode.js"></script>
 <script src="engine/LexicalAnalyzer.js"></script>
 <script src="engine/SyntaxParser.js"></script>
 <script src="engine/Symbol.js"></script>
 <script src="engine/NFA.js"></script>
-<script src="engine/helper/NFADebug.js"></script>
 <script src="engine/Tests.js"></script>
 
 <!-- ui specific -->
@@ -27,18 +28,17 @@
 </head>
 
 <body id="regex">
+
     <div class="container-fluid" id="panel">
 
         <div id="test-panel" class="row">
             <div class="col-md-12">
-
                 <div class="form-group">
-                    <label for="regex">Regex:</label> <input type="text" class="form-control" id="regexpr" required>
+                    <label for="regex">Regex:</label> <input type="text" class="form-control" id="regexpr" value="p|q" required>
                 </div>
                 <div class="form-group string">
-                    <label for="search">String:</label> <input type="text" class="form-control" id="search">
+                    <label for="search">Match against this string:</label> <input type="text" class="form-control" id="search">
                 </div>
-
             </div>
         </div>
 
@@ -50,10 +50,19 @@
             </div>
         </div>
 
+        <div class="row result-panel">
+            <div class="col-md-2 result-info">
+                Result: <span id="result"></span>
+            </div>
+        </div>
+
         <div class="row looking-for-panel">
-            <div class="col-md-12 looking-for-info" style="font-size: 110%">
+            <div class="col-md-2 looking-for-info" style="font-size: 110%">
                 Looking for char: <span id="looking-for" style="font-size: 110%">*</span>
             </div>
+
+
+
         </div>
 
         <div class="row">
@@ -63,6 +72,7 @@
         </div>
 
     </div>
+
 </body>
 
 </html>

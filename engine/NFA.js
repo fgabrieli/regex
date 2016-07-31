@@ -4,10 +4,16 @@
  * @author Fernando Gabrieli, fgabrieli at github
  */
 
-var stateId = 0;
-
-var calls = 0;
-
+/**
+ * Class to represent NFA states
+ * 
+ * @param String
+ *            type of state, i.e. alphabet, e-closure
+ * @param String
+ *            alphabet char
+ * @param boolean
+ *            is accepting state
+ */
 function State(type, char, isFinal) {
     this.type = type;
 
@@ -15,18 +21,12 @@ function State(type, char, isFinal) {
 
     this.isFinal = isFinal ? isFinal : false;
 
-    this.id = stateId++;
-
-    // console.log('creating', type, char, this.id);
+    this.id = UniqueId.get();
 
     // i leave this exposed for debugging purposes
     this.states = [];
 
     this.from = [];
-
-    // visited indicates if this state was already visited, we will always
-    // choose the one with less visits
-    this.visits = 0;
 
     this.add = function() {
         for (var i = 0; i < arguments.length; i++) {
@@ -41,51 +41,15 @@ function State(type, char, isFinal) {
     this.isEClosure = function() {
         return this.type === 'e-closure';
     }
-
-    this.getNext = function() {
-        // console.log('next', this.id, this.states);
-        return this.states;
-    }
-
-    this.hasNext = function() {
-        return this.states && this.states.length > 0;
-    }
-
-    this.print = function() {
-        var printed = [];
-
-        p(this);
-
-        function p(state) {
-            if (printed.indexOf(state) !== -1)
-                return;
-
-            console.log('(', state.char || state.type, ', id:', state.id, ', from:', state.from, ')', state.isFinal ? '[final]' : '');
-
-            printed.push(state);
-
-            for (var i = 0; i < state.states.length; i++) {
-                p(state.states[i]);
-            }
-
-        }
-    }
-
 }
 
 /**
  * Class to implement the NFA (nondeterministic finite automaton)
  */
 function NFA() {
-    var FINAL = true;
-
     var nfa = false;
 
     var last = false;
-
-    this.print = function() {
-        nfa.print();
-    }
 
     this.getNfa = function() {
         return nfa;
@@ -94,47 +58,55 @@ function NFA() {
     this.getLastState = function() {
         return last;
     }
-
-    function nextChar() {
-        if (idx === str.length)
-            return false;
-
-        return str[idx++];
+    
+    function getVisitedIds() {
+        var visited = [];
+        
+        for (var i = 0; i < statesVisited.length; i++) {
+            visited.push(statesVisited[i].id);
+        }
+        
+        return visited;
     }
 
-    var idx = 0;
-    var str = '';
+    var statesVisited = [];
 
-    this.test = function(strToTest) {
-        str = strToTest;
-
-        stateId = 0;
-        idx = 0;
+    this.test = function(str) {
+        UniqueId.reset();
+        
         NFADebug.reset();
-        NFADebug.net.selectNodes([]);
 
-        // ids visited
-        allTheVisits = [];
+        charIdx = 0;
 
         statesVisited = [];
 
-        calls = 0;
+        
+        var t = (function t(str) {
+            s = this.eClosure(nfa);
 
-        s = this.eclosure(nfa);
+            var c = nextChar();
+            do {
+                s = this.eClosure(this.move(s, c));
+                if (s === false) {
+                    s = nfa;
+                }
 
-        var c = nextChar();
-        do {
-            s = this.eclosure(this.move(s, c));
-            if (s === false) {
-                s = nfa;
-            }
+                c = nextChar();
+            } while (c);
 
-            // debugger;
+            return hasFinal(statesVisited);
+        }.bind(this));
 
-            c = nextChar();
-        } while (c);
 
-        return hasFinal(statesVisited);
+        var charIdx = 0;
+        function nextChar() {
+            if (charIdx === str.length)
+                return false;
+
+            return str[charIdx ++];
+        }
+
+        return t(str);
     }
 
     function hasFinal(s) {
@@ -162,18 +134,17 @@ function NFA() {
             found = m(from, s, c);
         }
 
-        allTheVisits = allTheVisits.concat(visited);
-
         if (!Tests.isTesting)
-            NFADebug.net.selectNodes(allTheVisits);
+            NFADebug.net.selectNodes(getVisitedIds());
 
         return found;
 
+        
         function m(from, s, c) {
             visited.push(s.id);
             statesVisited.push(s);
 
-            NFADebug.addPath(from, s, c);
+            NFADebug.addPath(from, s, c + ' move()');
 
             for (var i = 0; i < s.states.length; i++) {
                 var curr = s.states[i];
@@ -187,7 +158,7 @@ function NFA() {
                         return found;
                 } else {
                     if (curr.char === c) {
-                        NFADebug.addPath(s, curr, c);
+                        NFADebug.addPath(s, curr, c + ' move()');
 
                         return curr;
                     }
@@ -199,23 +170,19 @@ function NFA() {
         }
     }
 
-    var allTheVisits = [];
-
-    this.eclosure = function(s) {
+    this.eClosure = function(s) {
         if (s === false)
             return false;
 
         var visited = [];
         var eclosures = [];
 
-        var from = nfa;
+        //var from = nfa;
 
-        e(from, s);
-
-        allTheVisits = allTheVisits.concat(visited);
+        e(null, s);
 
         if (!Tests.isTesting)
-            NFADebug.net.selectNodes(allTheVisits);
+            NFADebug.net.selectNodes(getVisitedIds());
 
         return eclosures;
 
@@ -226,7 +193,8 @@ function NFA() {
             if (s.isEClosure())
                 eclosures.push(s);
 
-            NFADebug.addPath(from, s, '');
+            if (from !== null)
+                NFADebug.addPath(from, s, 'eClosure()');
 
             if (typeof s.states === 'undefined')
                 debugger;
@@ -244,6 +212,10 @@ function NFA() {
 
     }
 
+    this.draw = function(targetEl) {
+        NFADebug.draw(nfa, targetEl);
+    }
+
     this.createFromSyntaxTree = function(syntaxTree, setFinal) {
         // instead of an initial state i just set an e-closure
         nfa = new State('e-closure');
@@ -255,10 +227,6 @@ function NFA() {
         }
 
         return nfa;
-    }
-
-    this.draw = function(targetEl) {
-        NFADebug.draw(nfa, targetEl);
     }
 
     /**

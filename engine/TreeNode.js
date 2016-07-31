@@ -27,7 +27,6 @@ function TreeNode(type, data) {
 
     function printNode(node) {
         var whiteSpace = Array(indent * 4).join(' ');
-        console.log(whiteSpace, node.type, node.data);
 
         indent++;
 

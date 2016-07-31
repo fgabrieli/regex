@@ -9,7 +9,6 @@ var app = {
 
         var lexAnalyzer = new LexicalAnalyzer(regexStr);
         regexStr = lexAnalyzer.analyze();
-        console.log(regexStr);
 
         var syntaxParser = new SyntaxParser();
         var syntaxTree = syntaxParser.parse(regexStr);
@@ -22,16 +21,22 @@ var app = {
 
         var strToTest = $('#search').val();
         if (strToTest.length > 0) {
-            nfaInst.test(strToTest);
+            var result = nfaInst.test(strToTest);
+
+            $('#result').html(result ? 'matches' : 'no match');
+
+            var classToAdd = result ? 'matches' : 'no-match';
+            $('#result').removeClass('matches no-match').addClass(classToAdd);
         }
 
         this.toggleTestPanel();
     },
-    
+
     toggleTestPanel : function() {
         $('#test-panel').toggle();
         $('.btn-show-test-panel').toggle();
         $('.looking-for-panel').toggle();
+        $('.result-panel').toggle();
     }
 };
 
