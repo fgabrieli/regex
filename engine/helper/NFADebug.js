@@ -74,8 +74,8 @@ var NFADebug = {
 
         var stepData = this.path[--this.step];
 
-        $('#looking-for').html(stepData.lookingFor);
-
+        this.updateLookingFor(stepData);
+        
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
     },
 
@@ -88,9 +88,13 @@ var NFADebug = {
 
         var stepData = this.path[++this.step];
 
-        $('#looking-for').text(stepData.lookingFor);
+        this.updateLookingFor(stepData);
 
         this.selectEdge(stepData.from.id + '-' + stepData.to.id);
+    },
+
+    updateLookingFor : function(stepData) {
+        $('#looking-for').html(stepData.lookingFor.length ? stepData.lookingFor : '-');
     },
 
     /**

@@ -286,7 +286,3 @@ var Tests = {
         console.log('Result: ' + this.success + ' cases executed successfully. Good job my friend.');
     }
 }
-
-module.exports = {
-    Tests : Tests
-}

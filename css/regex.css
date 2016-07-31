@@ -8,3 +8,21 @@
     color: #036;
 }
 
+.btn-show-test-panel {
+    display: none;
+}
+
+.looking-for-panel {
+    display: none;
+    /* padding: 1vh; */
+    /* margin-top: 2vh; */
+    /* border: 1px solid #003366; */
+    /* width: 20vw; */
+}
+
+.looking-for-info {
+    /* padding: 1vh; */
+    margin-top: 2vh;
+    /* border: 1px solid #003366; */
+    /* width: 20vw; */
+}

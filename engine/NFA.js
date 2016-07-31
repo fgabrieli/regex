@@ -108,6 +108,7 @@ function NFA() {
     this.test = function(strToTest) {
         str = strToTest;
 
+        stateId = 0;
         idx = 0;
         NFADebug.reset();
         NFADebug.net.selectNodes([]);

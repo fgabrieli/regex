@@ -21,7 +21,3 @@ var RegexHelper = {
         return str[0] === '[';
     }
 }
-
-module.exports = {
-    RegexHelper : RegexHelper
-}
