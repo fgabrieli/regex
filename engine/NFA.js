@@ -129,9 +129,6 @@ function NFA() {
             found = m(from, s, c);
         }
 
-        if (!Tests.isTesting)
-            NFADebug.net.selectNodes(getVisitedIds());
-
         return found;
 
         
@@ -172,12 +169,7 @@ function NFA() {
         var visited = [];
         var eclosures = [];
 
-        //var from = nfa;
-
         e(null, s);
-
-        if (!Tests.isTesting)
-            NFADebug.net.selectNodes(getVisitedIds());
 
         return eclosures;
 
@@ -239,6 +231,8 @@ function NFA() {
             lastState = kleene(state, node.data.opn1);
         } else if (node.type == 'alphabet') {
             lastState = alphabet(state, node.data.char);
+        } else if (node.type == 'optional') {
+            lastState = optional(state, node.data.opn1);
         } else {
             lastState = state;
         }
@@ -331,6 +325,23 @@ function NFA() {
 
         opnState.add(e1);
 
+        return e1;
+    }
+
+    function optional(prevState, opn1) {
+        if (opn1 instanceof TreeNode) {
+            var nfaInst = new NFA();
+            opn1First = nfaInst.createFromSyntaxTree(opn1);
+            opn1Last = nfaInst.getLastState();
+        } else {
+            opn1First = opn1Last = new State('alphabet', opn1);
+        }
+
+        prevState.add(opn1First);
+        
+        var e1 = new State('e-closure');
+        prevState.add(e1);
+        
         return e1;
     }
 }

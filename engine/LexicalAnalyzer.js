@@ -8,7 +8,7 @@ function LexicalAnalyzer(str) {
     var currentIdx = 0;
 
     this.analyze = function() {
-        // precedence: *, +, alphabet, |
+        // precedence: *, +, alphabet, ?, |
 
         analyzeSuperSet();
 
@@ -22,10 +22,16 @@ function LexicalAnalyzer(str) {
 
         group();
 
+        analyzeOptional();
+
+        group();
+
         analyzeAlphabet();
 
         group();
 
+        console.log(str);
+        
         analyzeOr();
 
         group();
@@ -117,11 +123,13 @@ function LexicalAnalyzer(str) {
     }
 
     function isReserved() {
-        return [ '|', '*', '+' ].indexOf(lexeme()) !== -1;
+        return [ '|', '*', '+', '?' ].indexOf(lexeme()) !== -1;
     }
 
     function analyzeAlphabet() {
         resetIdx();
+
+        // XXX: analyze escaped chars as well
 
         do {
             // check escaping
@@ -131,6 +139,26 @@ function LexicalAnalyzer(str) {
                 str = str.replace(lexeme(), symbol.id);
 
                 return analyzeAlphabet();
+            }
+        } while (next());
+    }
+
+    function analyzeOptional() {
+        resetIdx();
+
+        do {
+            if (RegexHelper.isOptional(lexeme())) {
+                prev();
+                var regex = lexeme();
+                
+                next();
+                regex += lexeme();
+                
+                var symbol = new Symbol(regex);
+
+                str = str.replace(regex, symbol.id);
+                
+                return analyzeOptional();
             }
         } while (next());
     }
@@ -249,7 +277,7 @@ function LexicalAnalyzer(str) {
     /**
      * interface
      */
-    
+
     this.next = next;
 
     this.prev = prev;

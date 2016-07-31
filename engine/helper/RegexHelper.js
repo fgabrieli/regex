@@ -19,5 +19,9 @@ var RegexHelper = {
 
     isSet : function(str) {
         return str[0] === '[';
+    },
+
+    isOptional : function(str) {
+        return str[0] === '?';
     }
 }

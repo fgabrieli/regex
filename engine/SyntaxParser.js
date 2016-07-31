@@ -34,6 +34,10 @@ function SyntaxParser() {
                 node = kleene(lexAnalyzer);
 
                 addNode = true;
+            } else if (RegexHelper.isOptional(lexeme)) {
+                node = optional(lexAnalyzer);
+
+                addNode = true;
             } else {
                 stack.push(lexeme);
             }
@@ -131,6 +135,25 @@ function SyntaxParser() {
         lexAnalyzer.next();
 
         return node;
+    }
+
+    function optional(lexAnalyzer) {
+        lexAnalyzer.prev();
+
+        var opn1 = lexAnalyzer.isSymbol() ? new SyntaxParser().parse(lexAnalyzer.lexeme()) : lexAnalyzer.lexeme();
+
+        var node = new TreeNode('optional', {
+            opn1 : opn1
+        })
+
+        lexAnalyzer.next();
+        lexAnalyzer.next();
+
+        return node;
+    }
+
+    this.print = function() {
+        console.log(tree);
     }
 
     this.parse = parse;
