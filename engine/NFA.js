@@ -15,18 +15,13 @@
  *            is accepting state
  */
 function State(type, char, isFinal) {
+    // i leave these exposed for playing
     this.type = type;
-
     this.char = char ? char : false;
-
     this.isFinal = isFinal ? isFinal : false;
-
-    this.id = UniqueId.get();
-
-    // i leave this exposed for debugging purposes
     this.states = [];
-
     this.from = [];
+    this.id = UniqueId.get();
 
     this.add = function() {
         for (var i = 0; i < arguments.length; i++) {

@@ -24,11 +24,7 @@ function LexicalAnalyzer(str) {
 
         analyzeAlphabet();
 
-        console.log(str);
-
         group();
-
-        console.log(str);
 
         analyzeOr();
 
@@ -81,8 +77,6 @@ function LexicalAnalyzer(str) {
                 var expanded = expand();
 
                 str = str.replace(lexeme(), expanded);
-
-                console.log(str);
 
                 return analyzeSet();
             }
@@ -252,6 +246,10 @@ function LexicalAnalyzer(str) {
         return str[currentIdx] == '<';
     }
 
+    /**
+     * interface
+     */
+    
     this.next = next;
 
     this.prev = prev;
