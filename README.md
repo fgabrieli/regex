@@ -1,2 +1,78 @@
+<!-- Regex engine -->
+<html>
+<head>
 
-<h1>test</test>
+<!-- external libs -->
+<script src="bower_components/jQuery/dist/jquery.min.js"></script>
+<script src="bower_components/vis/dist/vis.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+
+<!-- regex engine -->
+<script src="engine/helper/UniqueId.js"></script>
+<script src="engine/helper/RegexHelper.js"></script>
+<script src="engine/helper/NFADebug.js"></script>
+<script src="engine/TreeNode.js"></script>
+<script src="engine/LexicalAnalyzer.js"></script>
+<script src="engine/SyntaxParser.js"></script>
+<script src="engine/Symbol.js"></script>
+<script src="engine/NFA.js"></script>
+<script src="engine/Tests.js"></script>
+
+<!-- ui specific -->
+<script src="js/app.js"></script>
+
+<!-- ui -->
+<link rel="stylesheet" href="css/regex.css" type="text/css" />
+
+</head>
+
+<body id="regex">
+
+    <div class="container-fluid" id="panel">
+
+        <div id="test-panel" class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="regex">Regex:</label> <input type="text" class="form-control" id="regexpr" value="p|q" required>
+                </div>
+                <div class="form-group string">
+                    <label for="search">Match against this string:</label> <input type="text" class="form-control" id="search">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-default" onClick="app.test()">Test my regex</button>
+                <button id="show-test-panel" class="btn btn-default btn-show-test-panel" onClick="app.toggleTestPanel()">Show test
+                    panel</button>
+            </div>
+        </div>
+
+        <div class="row result-panel">
+            <div class="col-md-2 result-info">
+                Result: <span id="result"></span>
+            </div>
+        </div>
+
+        <div class="row looking-for-panel">
+            <div class="col-md-2 looking-for-info" style="font-size: 110%">
+                Looking for char: <span id="looking-for" style="font-size: 110%">*</span>
+            </div>
+
+
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="nfa"></div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
